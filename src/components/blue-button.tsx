@@ -1,0 +1,41 @@
+import { Text, Pressable, StyleSheet } from "react-native";
+
+type BlueButtonProps = {
+    label: string;
+    onPress: () => void;
+}
+
+export const BlueButton = ({ label, onPress}: BlueButtonProps) => {
+    return(
+        <Pressable
+            style={({pressed}) => [
+                styles.button,
+                pressed && styles.buttonPressed
+            ]}
+            onPress={onPress}
+        >
+            <Text style={styles.buttonText}>
+                {label}
+            </Text>
+        </Pressable>
+    );
+};
+
+const styles = StyleSheet.create({
+  button: {
+    backgroundColor: "#007AFF",
+    borderRadius: 8,
+    padding: 16,
+    width: "100%",
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  buttonPressed: {
+    opacity: 0.6
+  },
+  buttonText: {
+    color: "#FFFFFF",
+    fontWeight: "400",
+    fontSize: 16,
+  },
+});
