@@ -32,9 +32,14 @@ const styles = StyleSheet.create({
     marginBottom: 8,
   },
   mainText: {
-    fontSize: 20
+    fontSize: 20,
+    fontWeight: 600,
+    color: "#000000",
+    marginBottom: 8,
   },
   secondaryText: {
-
+    fontSize: 16,
+    fontWeight: 400,
+    color: "#333333",
   }
 });
