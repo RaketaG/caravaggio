@@ -28,10 +28,27 @@ export const createTable = async (db: SQLiteDatabase, tableName: string) => {
 
 export const dropTable = async (db: SQLiteDatabase, tableName: string) => {
   await db.executeSql(
-    `DROP TABLE IF EXISTS ${tableName}`
+    `DROP TABLE IF EXISTS ${tableName};`
   );
 };
 
 export const listRecords = async (db: SQLiteDatabase, tableName: string) => {
-  return (await db.executeSql(`SELECT * FROM ${tableName}`))[0];
+  return (await db.executeSql(`SELECT * FROM ${tableName};`))[0];
+};
+
+export const insertRecord = async (
+  db: SQLiteDatabase,
+  tableName: string,
+  id: string,
+  word: string,
+  description: string,
+) => {
+  await db.executeSql(
+    `INSERT INTO ${tableName} (id, word, description) ` +
+    `VALUES ('${id}', '${word}', '${description}');`
+  );
+};
+
+export const deleteRecord = async (db: SQLiteDatabase, tableName: string, id: string) => {
+  await db.executeSql(`DELETE FROM ${tableName} WHERE id = '${id}';`)
 };

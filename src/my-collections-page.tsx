@@ -1,11 +1,13 @@
 import React, { useCallback, useEffect, useState } from 'react';
-import { StyleSheet, View, Text, TextInput, Pressable, ScrollView, Modal } from 'react-native';
+import { StyleSheet, View, TextInput, ScrollView, Modal } from 'react-native';
 import { createTable, dropTable, getDbConnection, listTables } from './db-service';
 import { BlueButton } from './components/blue-button';
 import { TextButton } from './components/text-button';
 import {useNavigation} from '@react-navigation/native';
 import {NativeStackNavigationProp} from "@react-navigation/native-stack";
 import {StackParams} from "../App.tsx";
+import { ListItem } from './components/list-item.tsx';
+import { AddButton } from './components/add-button.tsx';
 
 export const MyCollectionsPage = () => {
   const navigation = useNavigation<NativeStackNavigationProp<StackParams>>();
@@ -78,11 +80,10 @@ export const MyCollectionsPage = () => {
       </Modal>
 
       <ScrollView style={styles.scrollView}>
-        {collections.map((collection, index) => {
+        {collections.map((collection) => {
           return (
-            <Pressable
-              key={`${collection}${index}`}
-              style={styles.tableView}
+            <ListItem
+              key={`${collection}`}
               onLongPress={async () => {
                 await deleteCollection(collection);
                 await listCollections();
@@ -91,23 +92,14 @@ export const MyCollectionsPage = () => {
                 "CardsPage",
                 {collectionName: collection}
               )}
-            >
-              <Text>{collection}</Text>
-              <Text>Number of cards</Text>
-            </Pressable>
+              mainText={collection}
+              secondaryText='number of cards'
+            />
           );
         })}
       </ScrollView>
 
-      <Pressable
-          style={({pressed}) => [
-              styles.addTableCircle,
-              pressed && styles.addTableCirclePressed
-          ]}
-          onPress={() => setAddModalVisibility(true)}
-      >
-        <Text style={styles.plusStyle}>+</Text>
-      </Pressable>
+      <AddButton onPress={() => setAddModalVisibility(true)}/>
 
     </View>
   );
@@ -123,35 +115,6 @@ const styles = StyleSheet.create({
   scrollView: {
     width: "100%",
     paddingTop: 16,
-  },
-  tableView: {
-    borderWidth: 1,
-    borderColor: "#DDDDDD",
-    backgroundColor: "#FFFFFF",
-    borderRadius: 8,
-    padding: 16,
-    width: "100%",
-    fontSize: 16,
-    marginBottom: 8,
-  },
-  addTableCircle: {
-    position: "absolute",
-    right: 42,
-    bottom: 64,
-    backgroundColor: "#007AFF",
-    justifyContent: "center",
-    alignItems: "center",
-    width: 60,
-    height: 60,
-    borderRadius: 60,
-  },
-  addTableCirclePressed: {
-    backgroundColor: "#005BBB",
-  },
-  plusStyle: {
-    fontSize: 32,
-    color: "#FFFFFF",
-    marginTop: -4
   },
   inputField: {
     borderWidth: 1,
