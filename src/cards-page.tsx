@@ -21,7 +21,7 @@ export const CardsPage = ({ route }: NativeStackScreenProps<StackParams, "CardsP
   const [cards, setCards] = useState<CardType[]>([]);
   const [addModalVisibility, setAddModalVisibility] = useState<boolean>(false)
   const [cardId, setCardId] = useState<string>("");
-  const [forUpdate, setForUpdate] = useState<boolean>(true)
+  const [forUpdate, setForUpdate] = useState<boolean>(true);
 
   const newCard = async () => {
     const db = await getDbConnection();
@@ -82,7 +82,11 @@ export const CardsPage = ({ route }: NativeStackScreenProps<StackParams, "CardsP
           setNewWord("");
           setNewDescription("");
         }}
-        onRedButtonPress={() => setAddModalVisibility(false)}
+        onRedButtonPress={() => {
+          setAddModalVisibility(false);
+          setNewWord("");
+          setNewDescription("");
+        }}
       >
         <TextInput
             style={styles.inputField}
@@ -107,7 +111,7 @@ export const CardsPage = ({ route }: NativeStackScreenProps<StackParams, "CardsP
           return (
             <ListItem
               key={`${card.id}`}
-              onLongPress={async () => {
+              onDelete={async () => {
                 await deleteCard(card.id);
                 await listCards();
               }}

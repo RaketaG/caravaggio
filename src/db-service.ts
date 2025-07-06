@@ -26,6 +26,17 @@ export const createTable = async (db: SQLiteDatabase, tableName: string) => {
   );
 };
 
+export const renameTable = async (
+  db: SQLiteDatabase,
+  oldTableName: string,
+  newTableName: string,
+) => {
+  await db.executeSql(
+    `ALTER TABLE ${oldTableName} ` +
+    `RENAME TO ${newTableName};`
+  );
+};
+
 export const dropTable = async (db: SQLiteDatabase, tableName: string) => {
   await db.executeSql(
     `DROP TABLE IF EXISTS ${tableName};`

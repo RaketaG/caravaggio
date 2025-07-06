@@ -3,6 +3,7 @@ import { NavigationContainer } from "@react-navigation/native";
 import { MyCollectionsPage } from "./src/my-collections-page.tsx";
 import { CardsPage } from "./src/cards-page.tsx";
 import { LoginPage } from "./src/login-page.tsx";
+import { MenuProvider } from "react-native-popup-menu";
 
 export type StackParams = {
   LoginPage: undefined;
@@ -39,8 +40,10 @@ const RootStack = () => {
 export default function App () {
 
   return (
-    <NavigationContainer>
-      <RootStack />
-    </NavigationContainer>
+    <MenuProvider>
+      <NavigationContainer>
+        <RootStack />
+      </NavigationContainer>
+    </MenuProvider>
   );
 };

@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import { StyleSheet, View, TextInput, ScrollView } from 'react-native';
-import { createTable, dropTable, getDbConnection, listTables } from './db-service';
+import { createTable, dropTable, getDbConnection, listTables, renameTable } from './db-service';
 import {useNavigation} from '@react-navigation/native';
 import {NativeStackNavigationProp} from "@react-navigation/native-stack";
 import {StackParams} from "../App.tsx";
@@ -13,11 +13,18 @@ export const MyCollectionsPage = () => {
 
   const [collections, setCollections] = useState<string[]>([]);
   const [newCollectionName, setNewCollectionName] = useState<string>("");
+  const [oldCollectionName, setOldCollectionName] = useState<string>("");
   const [addModalVisibility, setAddModalVisibility] = useState<boolean>(false);
+  const [forUpdate, setForUpdate] = useState<boolean>(true);
 
   const newCollection = async (collectionName: string) => {
     const db = await getDbConnection();
     await createTable(db, collectionName);
+  };
+
+  const renameCollection = async (collectionName: string, newName: string) => {
+    const db = await getDbConnection();
+    await renameTable(db, collectionName, newName);
   };
 
   const deleteCollection = async (collectionName: string) => {
@@ -49,13 +56,18 @@ export const MyCollectionsPage = () => {
     
       <ModalWrapper
         visible={addModalVisibility}
+        forUpdate={forUpdate}
         onBlueButtonPress={async () => {
-          await newCollection(newCollectionName);
+          forUpdate ? await renameCollection(oldCollectionName, newCollectionName)
+            : await newCollection(newCollectionName);
           await listCollections();
           setNewCollectionName("");
           setAddModalVisibility(false);
         }}
-        onRedButtonPress={() => setAddModalVisibility(false)}
+        onRedButtonPress={() => {
+          setAddModalVisibility(false);
+          setNewCollectionName("");
+        }}
       >
         <TextInput
           style={styles.inputField}
@@ -69,23 +81,32 @@ export const MyCollectionsPage = () => {
         {collections.map((collection) => {
           return (
             <ListItem
-              key={`${collection}`}
-              onLongPress={async () => {
+              key={collection}
+              mainText={collection}
+              secondaryText='Number of cards'
+              onPress={() => navigation.navigate("CardsPage", {collectionName: collection})}
+              onDelete={async () => {
                 await deleteCollection(collection);
                 await listCollections();
               }}
-              onPress={() => navigation.navigate(
-                "CardsPage",
-                {collectionName: collection}
-              )}
-              mainText={collection}
-              secondaryText='number of cards'
+              onRename={async () => {
+                setForUpdate(true);
+                setNewCollectionName(collection);
+                setOldCollectionName(collection);
+                setAddModalVisibility(true);
+              }}
+
             />
           );
         })}
       </ScrollView>
-
-      <AddButton onPress={() => setAddModalVisibility(true)}/>
+            
+      <AddButton
+        onPress={() => {
+          setForUpdate(false);
+          setAddModalVisibility(true);
+        }}
+      />
 
     </View>
   );
