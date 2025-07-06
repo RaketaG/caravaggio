@@ -1,13 +1,12 @@
 import React, { useCallback, useEffect, useState } from 'react';
-import {StyleSheet, View, ScrollView, Modal, TextInput} from 'react-native';
-import { deleteRecord, getDbConnection, insertRecord, listRecords } from './db-service.ts';
+import {StyleSheet, View, ScrollView, TextInput} from 'react-native';
+import { deleteRecord, getDbConnection, insertRecord, listRecords, updateRecord } from './db-service.ts';
 import { StackParams } from '../App.tsx';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
-import { BlueButton } from './components/blue-button.tsx';
-import { TextButton } from './components/text-button.tsx';
 import uuid from 'react-native-uuid';
 import { ListItem } from './components/list-item.tsx';
 import { AddButton } from './components/add-button.tsx';
+import { ModalWrapper } from './components/modal-wrapper.tsx';
 
 type CardType = {
   id: string;
@@ -21,15 +20,27 @@ export const CardsPage = ({ route }: NativeStackScreenProps<StackParams, "CardsP
   const [newDescription, setNewDescription] = useState<string>("");
   const [cards, setCards] = useState<CardType[]>([]);
   const [addModalVisibility, setAddModalVisibility] = useState<boolean>(false)
+  const [cardId, setCardId] = useState<string>("");
+  const [forUpdate, setForUpdate] = useState<boolean>(true)
 
   const newCard = async () => {
     const db = await getDbConnection();
     const generatedId = uuid.v4();
-    console.log(generatedId);
     await insertRecord(
       db,
       collectionName,
       generatedId,
+      newWord,
+      newDescription,
+    );
+  };
+
+  const updateCard = async (id: string) => {
+    const db = await getDbConnection();
+    await updateRecord(
+      db,
+      collectionName,
+      id,
       newWord,
       newDescription,
     );
@@ -60,44 +71,36 @@ export const CardsPage = ({ route }: NativeStackScreenProps<StackParams, "CardsP
 
   return (
     <View style={styles.container}>
-    
-      <Modal
-        animationType="fade"
-        transparent={true}
-        visible={addModalVisibility}>
-        <View style={styles.centeredView}>
-          <View style={styles.modalView}>
-            <TextInput
-                style={styles.inputField}
-                placeholder="Word"
-                value={newWord}
-                onChangeText={setNewWord}
-            />
-            <TextInput
-                style={styles.inputField}
-                placeholder="Description"
-                value={newDescription}
-                onChangeText={setNewDescription}
-            />
-            <BlueButton
-              label="Create"
-              onPress={async () => {
-                await newCard();
-                await listCards();
-                setAddModalVisibility(false);
-                setNewWord("");
-                setNewDescription("");
-              }}
-            />
-            <TextButton
-              label="Cancel"
-              color="red"
-              marginTop={16}
-              onPress={() => setAddModalVisibility(false)}
-            />
-          </View>
-        </View>
-      </Modal>
+
+      <ModalWrapper
+        visible={addModalVisibility}
+        forUpdate={forUpdate}
+        onBlueButtonPress={async () => {
+          forUpdate ? await updateCard(cardId) : await newCard();
+          await listCards();
+          setAddModalVisibility(false);
+          setNewWord("");
+          setNewDescription("");
+        }}
+        onRedButtonPress={() => setAddModalVisibility(false)}
+      >
+        <TextInput
+            style={styles.inputField}
+            placeholder="Word"
+            value={newWord}
+            onChangeText={setNewWord}
+        />
+        <TextInput
+            style={[
+              styles.inputField,
+              styles.descriptionHeight
+            ]}
+            placeholder="Description"
+            multiline={true}
+            value={newDescription}
+            onChangeText={setNewDescription}
+        />
+      </ModalWrapper>
 
       <ScrollView style={styles.scrollView}>
         {cards.map((card) => {
@@ -108,7 +111,13 @@ export const CardsPage = ({ route }: NativeStackScreenProps<StackParams, "CardsP
                 await deleteCard(card.id);
                 await listCards();
               }}
-              onPress={() => {}}
+              onPress={async () => {
+                setForUpdate(true);
+                setAddModalVisibility(true);
+                setNewWord(card.word);
+                setNewDescription(card.description);
+                setCardId(card.id);
+              }}
               mainText={card.word}
               secondaryText={card.description}
             />
@@ -116,7 +125,12 @@ export const CardsPage = ({ route }: NativeStackScreenProps<StackParams, "CardsP
         })}
       </ScrollView>
       
-      <AddButton onPress={() => setAddModalVisibility(true)}/>
+      <AddButton
+        onPress={() => {
+          setForUpdate(false);
+          setAddModalVisibility(true);
+        }}
+      />
 
     </View>
   );
@@ -133,25 +147,6 @@ const styles = StyleSheet.create({
     width: "100%",
     paddingTop: 16,
   },
-  addTableCircle: {
-    position: "absolute",
-    right: 42,
-    bottom: 64,
-    backgroundColor: "#007AFF",
-    justifyContent: "center",
-    alignItems: "center",
-    width: 60,
-    height: 60,
-    borderRadius: 60,
-  },
-  addTableCirclePressed: {
-    backgroundColor: "#005BBB",
-  },
-  plusStyle: {
-    fontSize: 32,
-    color: "#FFFFFF",
-    marginTop: -4
-  },
   inputField: {
     borderWidth: 1,
     borderColor: "#DDDDDD",
@@ -162,29 +157,8 @@ const styles = StyleSheet.create({
     fontSize: 16,
     marginBottom: 16,
   },
-  centeredView: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    padding: 16,
-    backgroundColor: 'rgba(0, 0, 0, 0.4)'
-  },
-  modalView: {
-    marginTop: -48,
-    width: "100%",
-    borderRadius: 20,
-    borderWidth: 1,
-    borderColor: "#DDDDDD",
-    backgroundColor: "#FFFFFF",
-    padding: 32,
-    alignItems: 'center',
-    shadowColor: '#000',
-    shadowOffset: {
-      width: 0,
-      height: 2,
-    },
-    shadowOpacity: 0.25,
-    shadowRadius: 4,
-    elevation: 5,
-  },
+  descriptionHeight: {
+    height: 128,
+    textAlignVertical: "top"
+  }
 });

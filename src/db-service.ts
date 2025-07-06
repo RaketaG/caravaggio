@@ -49,6 +49,20 @@ export const insertRecord = async (
   );
 };
 
+export const updateRecord = async (
+  db: SQLiteDatabase,
+  tableName: string,
+  id: string,
+  word: string,
+  description: string,
+) => {
+  await db.executeSql(
+    `UPDATE ${tableName} ` +
+    `SET word = '${word}', description = '${description}' ` +
+    `WHERE id = '${id}';`
+  );
+};
+
 export const deleteRecord = async (db: SQLiteDatabase, tableName: string, id: string) => {
   await db.executeSql(`DELETE FROM ${tableName} WHERE id = '${id}';`)
 };

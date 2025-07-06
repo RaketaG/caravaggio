@@ -1,5 +1,5 @@
-import { Pressable, StyleSheet, Text } from "react-native";
-// import { IconAdd } from "../../assets/icon-add";
+import { Pressable, StyleSheet } from "react-native";
+import { IconAdd } from "../../assets/icon-add";
 
 type ListItemType = {
     onPress: () => void;
@@ -14,7 +14,7 @@ export const AddButton = ({ onPress }: ListItemType) => {
             ]}
             onPress={onPress}
         >
-            <Text>+</Text>
+            <IconAdd />
         </Pressable>
     );
 };
