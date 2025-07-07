@@ -4,12 +4,13 @@ import { Menu, MenuOption, MenuOptions, MenuTrigger } from "react-native-popup-m
 type ListItemType = {
     onDelete?: () => void;
     onRename?: () => void;
+    onQuizz?: () => void;
     onPress?: () => void;
     mainText: string;
     secondaryText: string;
 };
 
-export const ListItem = ({ onDelete, onRename, onPress, mainText, secondaryText }: ListItemType) => {
+export const ListItem = ({ onDelete, onRename, onQuizz, onPress, mainText, secondaryText }: ListItemType) => {
     return(
         <Menu>
 
@@ -47,6 +48,11 @@ export const ListItem = ({ onDelete, onRename, onPress, mainText, secondaryText 
               },
             }}
           >
+            {onQuizz &&
+              <MenuOption onSelect={onQuizz}>
+                <Text style={styles.textFormat}>Quizz</Text>
+              </MenuOption>
+            }
             {onRename &&
               <MenuOption onSelect={onRename}>
                 <Text style={styles.textFormat}>Rename</Text>
@@ -78,6 +84,7 @@ const styles = StyleSheet.create({
     width: "100%",
     fontSize: 16,
     marginBottom: 8,
+    elevation: 3,
   },
   mainText: {
     fontSize: 20,

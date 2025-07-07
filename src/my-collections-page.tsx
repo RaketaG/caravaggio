@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import { StyleSheet, View, TextInput, ScrollView } from 'react-native';
-import { createTable, dropTable, getDbConnection, listTables, renameTable } from './db-service';
+import { createTable, dropTable, getDbConnection, listTables, numberOfRecords, renameTable } from './db-service';
 import {useNavigation} from '@react-navigation/native';
 import {NativeStackNavigationProp} from "@react-navigation/native-stack";
 import {StackParams} from "../App.tsx";
@@ -12,6 +12,7 @@ export const MyCollectionsPage = () => {
   const navigation = useNavigation<NativeStackNavigationProp<StackParams>>();
 
   const [collections, setCollections] = useState<string[]>([]);
+  const [cardCount, setCardCount] = useState<{[key: string]: number}>({});
   const [newCollectionName, setNewCollectionName] = useState<string>("");
   const [oldCollectionName, setOldCollectionName] = useState<string>("");
   const [addModalVisibility, setAddModalVisibility] = useState<boolean>(false);
@@ -37,20 +38,27 @@ export const MyCollectionsPage = () => {
     const collectionListQuery = await listTables(db);
 
     const names: string[] = [];
+    const counts: { [key: string]: number } = {};
+
     collectionListQuery.forEach(result => {
         for (let i = 0; i < result.rows.length; i++) {
-            console.log(result.rows)
             names.push(result.rows.item(i).name);
         }
     });
+    
+    for (const name of names) {
+      const result = await numberOfRecords(db, name);
+      counts[name] = result.rows.item(0).count;
+    }
 
     setCollections(names);
+    setCardCount(counts);
   },[]);
 
   useEffect(() => {
     listCollections();
   }, [listCollections]);
-  
+
   return (
     <View style={styles.container}>
     
@@ -71,7 +79,7 @@ export const MyCollectionsPage = () => {
       >
         <TextInput
           style={styles.inputField}
-          placeholder="TableName"
+          placeholder="Collection name"
           value={newCollectionName}
           onChangeText={setNewCollectionName}
         />
@@ -83,7 +91,7 @@ export const MyCollectionsPage = () => {
             <ListItem
               key={collection}
               mainText={collection}
-              secondaryText='Number of cards'
+              secondaryText={`${cardCount[collection]} Cards`}
               onPress={() => navigation.navigate("CardsPage", {collectionName: collection})}
               onDelete={async () => {
                 await deleteCollection(collection);
@@ -95,7 +103,7 @@ export const MyCollectionsPage = () => {
                 setOldCollectionName(collection);
                 setAddModalVisibility(true);
               }}
-
+              onQuizz={() => navigation.navigate("QuizzPage", {collectionName: collection})}
             />
           );
         })}
@@ -122,6 +130,7 @@ const styles = StyleSheet.create({
   scrollView: {
     width: "100%",
     paddingTop: 16,
+    overflow: 'visible'
   },
   inputField: {
     borderWidth: 1,

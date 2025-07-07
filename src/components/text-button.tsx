@@ -2,7 +2,7 @@ import { Text, Pressable, StyleSheet } from "react-native";
 
 type BlueButtonProps = {
     label: string;
-    onPress: () => void;
+    onPress?: () => void;
     color?: string;
     marginTop?: number;
     marginBottom?: number;

@@ -1,14 +1,16 @@
 import React, { useCallback, useEffect, useState } from 'react';
-import {StyleSheet, View, ScrollView, TextInput} from 'react-native';
+import {StyleSheet, View, ScrollView, TextInput} from  'react-native';
 import { deleteRecord, getDbConnection, insertRecord, listRecords, updateRecord } from './db-service.ts';
 import { StackParams } from '../App.tsx';
-import { NativeStackScreenProps } from '@react-navigation/native-stack';
+import { NativeStackNavigationProp, NativeStackScreenProps } from '@react-navigation/native-stack';
 import uuid from 'react-native-uuid';
 import { ListItem } from './components/list-item.tsx';
 import { AddButton } from './components/add-button.tsx';
 import { ModalWrapper } from './components/modal-wrapper.tsx';
+import { useNavigation } from '@react-navigation/native';
+import { TextButton } from './components/text-button.tsx';
 
-type CardType = {
+export type CardType = {
   id: string;
   word: string;
   description: string;
@@ -16,12 +18,28 @@ type CardType = {
 
 export const CardsPage = ({ route }: NativeStackScreenProps<StackParams, "CardsPage">) => {
   const  { collectionName } = route.params;
+  const navigation = useNavigation<NativeStackNavigationProp<StackParams>>();
   const [newWord, setNewWord] = useState<string>("");
   const [newDescription, setNewDescription] = useState<string>("");
   const [cards, setCards] = useState<CardType[]>([]);
   const [addModalVisibility, setAddModalVisibility] = useState<boolean>(false)
   const [cardId, setCardId] = useState<string>("");
   const [forUpdate, setForUpdate] = useState<boolean>(true);
+
+  const headerRight = useCallback(() => {
+    return (
+      <TextButton
+        label="Quizz"
+        onPress={() => navigation.navigate("QuizzPage", {collectionName: collectionName})}
+      />
+    );
+  }, [collectionName, navigation])
+  
+  useEffect(() => {
+    navigation.setOptions({
+      headerRight: headerRight
+    })
+  }, [headerRight, navigation]);
 
   const newCard = async () => {
     const db = await getDbConnection();
@@ -150,6 +168,7 @@ const styles = StyleSheet.create({
   scrollView: {
     width: "100%",
     paddingTop: 16,
+    overflow: "visible"
   },
   inputField: {
     borderWidth: 1,

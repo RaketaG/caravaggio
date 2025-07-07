@@ -16,7 +16,14 @@ export const getDbConnection = async () => {
 };
 
 export const listTables = async (db: SQLiteDatabase) => {
-  return await db.executeSql(`SELECT name FROM sqlite_master WHERE type='table';`);
+  return await db.executeSql(
+    `SELECT name FROM sqlite_master ` +
+    `WHERE type='table' ` +
+    `AND name NOT IN ('android_metadata', 'sqlite_sequence');`);
+};
+
+export const numberOfRecords = async (db: SQLiteDatabase, tableName: string) => {
+  return (await db.executeSql(`SELECT COUNT(*) AS count FROM ${tableName};`))[0];
 };
 
 export const createTable = async (db: SQLiteDatabase, tableName: string) => {
