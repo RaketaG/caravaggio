@@ -17,7 +17,7 @@ export const QuizzPage = ({ route }: NativeStackScreenProps<StackParams, "QuizzP
         return (
           <TextButton
             label="Collections"
-            onPress={() => navigation.navigate("MyCollectionsPage")}
+            onPress={() => navigation.popToTop()}
           />
         );
       }, [navigation])
