@@ -1,8 +1,17 @@
 import React, { useCallback, useEffect, useState } from 'react';
-import {StyleSheet, View, ScrollView, TextInput} from  'react-native';
-import { deleteRecord, getDbConnection, insertRecord, listRecords, updateRecord } from './db-service.ts';
+import { StyleSheet, View, ScrollView, TextInput } from 'react-native';
+import {
+  deleteRecord,
+  getDbConnection,
+  insertRecord,
+  listRecords,
+  updateRecord,
+} from './db-service.ts';
 import { StackParams } from '../App.tsx';
-import { NativeStackNavigationProp, NativeStackScreenProps } from '@react-navigation/native-stack';
+import {
+  NativeStackNavigationProp,
+  NativeStackScreenProps,
+} from '@react-navigation/native-stack';
 import uuid from 'react-native-uuid';
 import { ListItem } from './components/list-item.tsx';
 import { AddButton } from './components/add-button.tsx';
@@ -16,29 +25,33 @@ export type CardType = {
   description: string;
 };
 
-export const CardsPage = ({ route }: NativeStackScreenProps<StackParams, "CardsPage">) => {
-  const  { collectionName } = route.params;
+export const CardsPage = ({
+  route,
+}: NativeStackScreenProps<StackParams, 'CardsPage'>) => {
+  const { collectionName } = route.params;
   const navigation = useNavigation<NativeStackNavigationProp<StackParams>>();
-  const [newWord, setNewWord] = useState<string>("");
-  const [newDescription, setNewDescription] = useState<string>("");
+  const [newWord, setNewWord] = useState<string>('');
+  const [newDescription, setNewDescription] = useState<string>('');
   const [cards, setCards] = useState<CardType[]>([]);
-  const [addModalVisibility, setAddModalVisibility] = useState<boolean>(false)
-  const [cardId, setCardId] = useState<string>("");
+  const [addModalVisibility, setAddModalVisibility] = useState<boolean>(false);
+  const [cardId, setCardId] = useState<string>('');
   const [forUpdate, setForUpdate] = useState<boolean>(true);
 
   const headerRight = useCallback(() => {
     return (
       <TextButton
         label="Quizz"
-        onPress={() => navigation.navigate("QuizzPage", {collectionName: collectionName})}
+        onPress={() =>
+          navigation.navigate('QuizzPage', { collectionName: collectionName })
+        }
       />
     );
-  }, [collectionName, navigation])
-  
+  }, [collectionName, navigation]);
+
   useEffect(() => {
     navigation.setOptions({
-      headerRight: headerRight
-    })
+      headerRight: headerRight,
+    });
   }, [headerRight, navigation]);
 
   const newCard = async () => {
@@ -55,24 +68,18 @@ export const CardsPage = ({ route }: NativeStackScreenProps<StackParams, "CardsP
 
   const updateCard = async (id: string) => {
     const db = await getDbConnection();
-    await updateRecord(
-      db,
-      collectionName,
-      id,
-      newWord,
-      newDescription,
-    );
+    await updateRecord(db, collectionName, id, newWord, newDescription);
   };
 
   const deleteCard = async (id: string) => {
     const db = await getDbConnection();
-    await deleteRecord(db, collectionName,id );
+    await deleteRecord(db, collectionName, id);
   };
 
   const listCards = useCallback(async () => {
     const db = await getDbConnection();
     const cardListQuery = await listRecords(db, collectionName);
-    
+
     const records: CardType[] = [];
 
     for (let i = 0; i < cardListQuery.rows.length; i++) {
@@ -80,7 +87,6 @@ export const CardsPage = ({ route }: NativeStackScreenProps<StackParams, "CardsP
     }
 
     setCards(records);
-    
   }, [collectionName]);
 
   useEffect(() => {
@@ -89,7 +95,6 @@ export const CardsPage = ({ route }: NativeStackScreenProps<StackParams, "CardsP
 
   return (
     <View style={styles.container}>
-
       <ModalWrapper
         visible={addModalVisibility}
         forUpdate={forUpdate}
@@ -97,35 +102,32 @@ export const CardsPage = ({ route }: NativeStackScreenProps<StackParams, "CardsP
           forUpdate ? await updateCard(cardId) : await newCard();
           await listCards();
           setAddModalVisibility(false);
-          setNewWord("");
-          setNewDescription("");
+          setNewWord('');
+          setNewDescription('');
         }}
         onRedButtonPress={() => {
           setAddModalVisibility(false);
-          setNewWord("");
-          setNewDescription("");
+          setNewWord('');
+          setNewDescription('');
         }}
       >
         <TextInput
-            style={styles.inputField}
-            placeholder="Word"
-            value={newWord}
-            onChangeText={setNewWord}
+          style={styles.inputField}
+          placeholder="Word"
+          value={newWord}
+          onChangeText={setNewWord}
         />
         <TextInput
-            style={[
-              styles.inputField,
-              styles.descriptionHeight
-            ]}
-            placeholder="Description"
-            multiline={true}
-            value={newDescription}
-            onChangeText={setNewDescription}
+          style={[styles.inputField, styles.descriptionHeight]}
+          placeholder="Description"
+          multiline={true}
+          value={newDescription}
+          onChangeText={setNewDescription}
         />
       </ModalWrapper>
 
       <ScrollView style={styles.scrollView}>
-        {cards.map((card) => {
+        {cards.map(card => {
           return (
             <ListItem
               key={`${card.id}`}
@@ -146,14 +148,13 @@ export const CardsPage = ({ route }: NativeStackScreenProps<StackParams, "CardsP
           );
         })}
       </ScrollView>
-      
+
       <AddButton
         onPress={() => {
           setForUpdate(false);
           setAddModalVisibility(true);
         }}
       />
-
     </View>
   );
 };
@@ -166,22 +167,22 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
   },
   scrollView: {
-    width: "100%",
+    width: '100%',
     paddingTop: 16,
-    overflow: "visible"
+    overflow: 'visible',
   },
   inputField: {
     borderWidth: 1,
-    borderColor: "#DDDDDD",
-    backgroundColor: "#FFFFFF",
+    borderColor: '#DDDDDD',
+    backgroundColor: '#FFFFFF',
     borderRadius: 8,
     padding: 16,
-    width: "100%",
+    width: '100%',
     fontSize: 16,
     marginBottom: 16,
   },
   descriptionHeight: {
     height: 128,
-    textAlignVertical: "top"
-  }
+    textAlignVertical: 'top',
+  },
 });

@@ -1,35 +1,45 @@
-import { enablePromise, openDatabase, SQLiteDatabase } from 'react-native-sqlite-storage';
+import {
+  enablePromise,
+  openDatabase,
+  SQLiteDatabase,
+} from 'react-native-sqlite-storage';
 
 enablePromise(true);
 
 export type CardType = {
   id: string;
   word: string;
-  description: string
+  description: string;
 };
 
 export const getDbConnection = async () => {
-    return openDatabase({
-        name: 'caravaggio-data.db',
-        location: 'default'
-    });
+  return openDatabase({
+    name: 'caravaggio-data.db',
+    location: 'default',
+  });
 };
 
 export const listTables = async (db: SQLiteDatabase) => {
   return await db.executeSql(
     `SELECT name FROM sqlite_master ` +
-    `WHERE type='table' ` +
-    `AND name NOT IN ('android_metadata', 'sqlite_sequence');`);
+      `WHERE type='table' ` +
+      `AND name NOT IN ('android_metadata', 'sqlite_sequence');`,
+  );
 };
 
-export const numberOfRecords = async (db: SQLiteDatabase, tableName: string) => {
-  return (await db.executeSql(`SELECT COUNT(*) AS count FROM ${tableName};`))[0];
+export const numberOfRecords = async (
+  db: SQLiteDatabase,
+  tableName: string,
+) => {
+  return (
+    await db.executeSql(`SELECT COUNT(*) AS count FROM ${tableName};`)
+  )[0];
 };
 
 export const createTable = async (db: SQLiteDatabase, tableName: string) => {
   await db.executeSql(
     `CREATE TABLE IF NOT EXISTS ${tableName}` +
-    `(id TEXT PRIMARY KEY, word TEXT, description TEXT);`
+      `(id TEXT PRIMARY KEY, word TEXT, description TEXT);`,
   );
 };
 
@@ -39,15 +49,12 @@ export const renameTable = async (
   newTableName: string,
 ) => {
   await db.executeSql(
-    `ALTER TABLE ${oldTableName} ` +
-    `RENAME TO ${newTableName};`
+    `ALTER TABLE ${oldTableName} ` + `RENAME TO ${newTableName};`,
   );
 };
 
 export const dropTable = async (db: SQLiteDatabase, tableName: string) => {
-  await db.executeSql(
-    `DROP TABLE IF EXISTS ${tableName};`
-  );
+  await db.executeSql(`DROP TABLE IF EXISTS ${tableName};`);
 };
 
 export const listRecords = async (db: SQLiteDatabase, tableName: string) => {
@@ -63,7 +70,7 @@ export const insertRecord = async (
 ) => {
   await db.executeSql(
     `INSERT INTO ${tableName} (id, word, description) ` +
-    `VALUES ('${id}', '${word}', '${description}');`
+      `VALUES ('${id}', '${word}', '${description}');`,
   );
 };
 
@@ -76,11 +83,15 @@ export const updateRecord = async (
 ) => {
   await db.executeSql(
     `UPDATE ${tableName} ` +
-    `SET word = '${word}', description = '${description}' ` +
-    `WHERE id = '${id}';`
+      `SET word = '${word}', description = '${description}' ` +
+      `WHERE id = '${id}';`,
   );
 };
 
-export const deleteRecord = async (db: SQLiteDatabase, tableName: string, id: string) => {
-  await db.executeSql(`DELETE FROM ${tableName} WHERE id = '${id}';`)
+export const deleteRecord = async (
+  db: SQLiteDatabase,
+  tableName: string,
+  id: string,
+) => {
+  await db.executeSql(`DELETE FROM ${tableName} WHERE id = '${id}';`);
 };

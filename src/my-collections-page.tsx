@@ -1,9 +1,16 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import { StyleSheet, View, TextInput, ScrollView } from 'react-native';
-import { createTable, dropTable, getDbConnection, listTables, numberOfRecords, renameTable } from './db-service';
-import {useNavigation} from '@react-navigation/native';
-import {NativeStackNavigationProp} from "@react-navigation/native-stack";
-import {StackParams} from "../App.tsx";
+import {
+  createTable,
+  dropTable,
+  getDbConnection,
+  listTables,
+  numberOfRecords,
+  renameTable,
+} from './db-service';
+import { useNavigation } from '@react-navigation/native';
+import { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import { StackParams } from '../App.tsx';
 import { ListItem } from './components/list-item.tsx';
 import { AddButton } from './components/add-button.tsx';
 import { ModalWrapper } from './components/modal-wrapper.tsx';
@@ -12,9 +19,9 @@ export const MyCollectionsPage = () => {
   const navigation = useNavigation<NativeStackNavigationProp<StackParams>>();
 
   const [collections, setCollections] = useState<string[]>([]);
-  const [cardCount, setCardCount] = useState<{[key: string]: number}>({});
-  const [newCollectionName, setNewCollectionName] = useState<string>("");
-  const [oldCollectionName, setOldCollectionName] = useState<string>("");
+  const [cardCount, setCardCount] = useState<{ [key: string]: number }>({});
+  const [newCollectionName, setNewCollectionName] = useState<string>('');
+  const [oldCollectionName, setOldCollectionName] = useState<string>('');
   const [addModalVisibility, setAddModalVisibility] = useState<boolean>(false);
   const [forUpdate, setForUpdate] = useState<boolean>(true);
 
@@ -41,11 +48,11 @@ export const MyCollectionsPage = () => {
     const counts: { [key: string]: number } = {};
 
     collectionListQuery.forEach(result => {
-        for (let i = 0; i < result.rows.length; i++) {
-            names.push(result.rows.item(i).name);
-        }
+      for (let i = 0; i < result.rows.length; i++) {
+        names.push(result.rows.item(i).name);
+      }
     });
-    
+
     for (const name of names) {
       const result = await numberOfRecords(db, name);
       counts[name] = result.rows.item(0).count;
@@ -53,7 +60,7 @@ export const MyCollectionsPage = () => {
 
     setCollections(names);
     setCardCount(counts);
-  },[]);
+  }, []);
 
   useEffect(() => {
     listCollections();
@@ -61,20 +68,20 @@ export const MyCollectionsPage = () => {
 
   return (
     <View style={styles.container}>
-    
       <ModalWrapper
         visible={addModalVisibility}
         forUpdate={forUpdate}
         onBlueButtonPress={async () => {
-          forUpdate ? await renameCollection(oldCollectionName, newCollectionName)
+          forUpdate
+            ? await renameCollection(oldCollectionName, newCollectionName)
             : await newCollection(newCollectionName);
           await listCollections();
-          setNewCollectionName("");
+          setNewCollectionName('');
           setAddModalVisibility(false);
         }}
         onRedButtonPress={() => {
           setAddModalVisibility(false);
-          setNewCollectionName("");
+          setNewCollectionName('');
         }}
       >
         <TextInput
@@ -86,13 +93,15 @@ export const MyCollectionsPage = () => {
       </ModalWrapper>
 
       <ScrollView style={styles.scrollView}>
-        {collections.map((collection) => {
+        {collections.map(collection => {
           return (
             <ListItem
               key={collection}
               mainText={collection}
               secondaryText={`${cardCount[collection]} Cards`}
-              onPress={() => navigation.navigate("CardsPage", {collectionName: collection})}
+              onPress={() =>
+                navigation.navigate('CardsPage', { collectionName: collection })
+              }
               onDelete={async () => {
                 await deleteCollection(collection);
                 await listCollections();
@@ -103,19 +112,20 @@ export const MyCollectionsPage = () => {
                 setOldCollectionName(collection);
                 setAddModalVisibility(true);
               }}
-              onQuizz={() => navigation.navigate("QuizzPage", {collectionName: collection})}
+              onQuizz={() =>
+                navigation.navigate('QuizzPage', { collectionName: collection })
+              }
             />
           );
         })}
       </ScrollView>
-            
+
       <AddButton
         onPress={() => {
           setForUpdate(false);
           setAddModalVisibility(true);
         }}
       />
-
     </View>
   );
 };
@@ -128,17 +138,17 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
   },
   scrollView: {
-    width: "100%",
+    width: '100%',
     paddingTop: 16,
-    overflow: 'visible'
+    overflow: 'visible',
   },
   inputField: {
     borderWidth: 1,
-    borderColor: "#DDDDDD",
-    backgroundColor: "#FFFFFF",
+    borderColor: '#DDDDDD',
+    backgroundColor: '#FFFFFF',
     borderRadius: 8,
     padding: 16,
-    width: "100%",
+    width: '100%',
     fontSize: 16,
     marginBottom: 16,
   },
