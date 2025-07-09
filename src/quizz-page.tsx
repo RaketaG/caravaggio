@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useState } from 'react';
-import { View, StyleSheet, Pressable, Text, Dimensions } from 'react-native';
+import { View, StyleSheet, Text, Dimensions } from 'react-native';
 import { getDbConnection, listRecords } from './db-service';
 import {
   NativeStackNavigationProp,
@@ -14,7 +14,10 @@ import Animated, {
   useAnimatedStyle,
   withSpring,
   runOnJS,
+  withTiming,
+  Easing,
 } from 'react-native-reanimated';
+import { Gesture, GestureDetector } from 'react-native-gesture-handler';
 
 const { width: SCREEN_WIDTH } = Dimensions.get('window');
 
@@ -58,11 +61,15 @@ export const QuizzPage = ({
 
   const translateXOne = useSharedValue(0);
   const translateXTwo = useSharedValue(SCREEN_WIDTH);
-
-  const AnimatedPressable = Animated.createAnimatedComponent(Pressable);
+  const pressedColor = useSharedValue('#FFFFFF');
+  const cardScale = useSharedValue(1);
 
   const animatedStyleOne = useAnimatedStyle(() => ({
-    transform: [{ translateX: translateXOne.value }],
+    backgroundColor: pressedColor.value,
+    transform: [
+      { translateX: translateXOne.value },
+      { scale: cardScale.value },
+    ],
   }));
 
   const animatedStyleTwo = useAnimatedStyle(() => ({
@@ -84,16 +91,47 @@ export const QuizzPage = ({
     translateXTwo.value = withSpring(0);
   };
 
+  const swipeGesture = Gesture.Pan()
+    .onUpdate(event => {
+      translateXOne.value = event.translationX;
+      translateXTwo.value = SCREEN_WIDTH + event.translationX;
+    })
+    .onEnd(() => {
+      if (translateXOne.value < -150) {
+        runOnJS(handleCardChange)();
+      } else {
+        translateXOne.value = withSpring(0);
+        translateXTwo.value = withSpring(SCREEN_WIDTH);
+      }
+    });
+
+  const longPressGesture = Gesture.LongPress()
+    .onBegin(() => {
+      cardScale.value = withTiming(1.2, {
+        duration: 200,
+        easing: Easing.bezier(0.31, 0.04, 0.03, 1.04),
+      });
+      pressedColor.value = withTiming('linen', {
+        duration: 500,
+        easing: Easing.bezier(0.31, 0.04, 0.03, 1.04),
+      });
+    })
+    .onFinalize(() => {
+      cardScale.value = 1;
+      pressedColor.value = '#FFFFFF';
+    });
+
+  const composedGesture = Gesture.Race(swipeGesture, longPressGesture);
+
   return (
     <View style={styles.container}>
-      <AnimatedPressable
-        style={[styles.card, animatedStyleOne]}
-        onPress={handleCardChange}
-      >
-        {cards[counter - 1] && (
-          <Text style={styles.textView}>{cards[counter - 1].word}</Text>
-        )}
-      </AnimatedPressable>
+      <GestureDetector gesture={composedGesture}>
+        <Animated.View style={[styles.card, animatedStyleOne]}>
+          {cards[counter - 1] && (
+            <Text style={styles.textView}>{cards[counter - 1].word}</Text>
+          )}
+        </Animated.View>
+      </GestureDetector>
 
       <Animated.View style={[styles.card, animatedStyleTwo]}>
         {cards[counter - 1] && (
