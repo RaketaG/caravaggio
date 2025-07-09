@@ -40,9 +40,9 @@ export const CardsPage = ({
   const headerRight = useCallback(() => {
     return (
       <TextButton
-        label="Quizz"
+        label="Quiz"
         onPress={() =>
-          navigation.navigate('QuizzPage', { collectionName: collectionName })
+          navigation.navigate('QuizPage', { collectionName: collectionName })
         }
       />
     );

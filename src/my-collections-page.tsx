@@ -112,8 +112,8 @@ export const MyCollectionsPage = () => {
                 setOldCollectionName(collection);
                 setAddModalVisibility(true);
               }}
-              onQuizz={() =>
-                navigation.navigate('QuizzPage', { collectionName: collection })
+              onQuiz={() =>
+                navigation.navigate('QuizPage', { collectionName: collection })
               }
             />
           );

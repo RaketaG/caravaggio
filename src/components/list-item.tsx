@@ -9,7 +9,7 @@ import {
 type ListItemType = {
   onDelete?: () => void;
   onRename?: () => void;
-  onQuizz?: () => void;
+  onQuiz?: () => void;
   onPress?: () => void;
   mainText: string;
   secondaryText: string;
@@ -18,7 +18,7 @@ type ListItemType = {
 export const ListItem = ({
   onDelete,
   onRename,
-  onQuizz,
+  onQuiz,
   onPress,
   mainText,
   secondaryText,
@@ -59,9 +59,9 @@ export const ListItem = ({
           },
         }}
       >
-        {onQuizz && (
-          <MenuOption onSelect={onQuizz}>
-            <Text style={styles.textFormat}>Quizz</Text>
+        {onQuiz && (
+          <MenuOption onSelect={onQuiz}>
+            <Text style={styles.textFormat}>Quiz</Text>
           </MenuOption>
         )}
         {onRename && (

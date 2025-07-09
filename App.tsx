@@ -4,7 +4,7 @@ import { MyCollectionsPage } from './src/my-collections-page.tsx';
 import { CardsPage } from './src/cards-page.tsx';
 import { LoginPage } from './src/login-page.tsx';
 import { MenuProvider } from 'react-native-popup-menu';
-import { QuizzPage } from './src/quizz-page.tsx';
+import { QuizPage } from './src/quiz-page.tsx';
 import { useCallback } from 'react';
 import { TextButton } from './src/components/text-button.tsx';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
@@ -13,14 +13,14 @@ export type StackParams = {
   LoginPage: undefined;
   MyCollectionsPage: undefined;
   CardsPage: { collectionName: string };
-  QuizzPage: { collectionName: string };
+  QuizPage: { collectionName: string };
 };
 
 const Stack = createNativeStackNavigator<StackParams>();
 
 const RootStack = () => {
   const headerRight = useCallback(() => {
-    return <TextButton label="Quizz" />;
+    return <TextButton label="Quiz" />;
   }, []);
 
   return (
@@ -48,10 +48,10 @@ const RootStack = () => {
         }}
       />
       <Stack.Screen
-        name="QuizzPage"
-        component={QuizzPage}
+        name="QuizPage"
+        component={QuizPage}
         options={{
-          title: 'Quizz',
+          title: 'Quiz',
         }}
       />
     </Stack.Navigator>
