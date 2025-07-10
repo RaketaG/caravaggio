@@ -13,7 +13,7 @@ import {
   NativeStackScreenProps,
 } from '@react-navigation/native-stack';
 import uuid from 'react-native-uuid';
-import { ListItem } from './components/list-item.tsx';
+import { ListItemWrapper } from './components/list-item-wrapper.tsx';
 import { AddButton } from './components/add-button.tsx';
 import { ModalWrapper } from './components/modal-wrapper.tsx';
 import { useNavigation } from '@react-navigation/native';
@@ -43,7 +43,8 @@ export const CardsPage = ({
       <TextButton
         label="Quiz"
         onPress={() =>
-          cards.length && navigation.navigate('QuizPage', { collectionName: collectionName })
+          cards.length &&
+          navigation.navigate('QuizPage', { collectionName: collectionName })
         }
       />
     );
@@ -128,10 +129,12 @@ export const CardsPage = ({
       </ModalWrapper>
 
       <ScrollView style={styles.scrollView}>
-        {cards.map(card => {
+        {cards.map((card, index) => {
           return (
-            <ListItem
+            <ListItemWrapper
               key={`${card.id}`}
+              listView="Cards"
+              index={index}
               onDelete={async () => {
                 await deleteCard(card.id);
                 await listCards();

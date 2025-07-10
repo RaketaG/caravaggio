@@ -22,7 +22,7 @@ const styles = StyleSheet.create({
     position: 'absolute',
     right: 42,
     bottom: 64,
-    backgroundColor: colors.jasmine[500],
+    backgroundColor: colors.fawn[500],
     justifyContent: 'center',
     alignItems: 'center',
     width: 60,

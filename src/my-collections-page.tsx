@@ -11,7 +11,7 @@ import {
 import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { StackParams } from '../App.tsx';
-import { ListItem } from './components/list-item.tsx';
+import { ListItemWrapper } from './components/list-item-wrapper.tsx';
 import { AddButton } from './components/add-button.tsx';
 import { ModalWrapper } from './components/modal-wrapper.tsx';
 import { colors } from './theme/colors.ts';
@@ -94,10 +94,12 @@ export const MyCollectionsPage = () => {
       </ModalWrapper>
 
       <ScrollView style={styles.scrollView}>
-        {collections.map(collection => {
+        {collections.map((collection, index) => {
           return (
-            <ListItem
+            <ListItemWrapper
               key={collection}
+              index={index}
+              listView="Collection"
               mainText={collection}
               secondaryText={`${cardCount[collection]} Cards`}
               onPress={() =>

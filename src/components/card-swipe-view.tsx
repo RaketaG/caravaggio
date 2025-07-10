@@ -7,6 +7,7 @@ import Animated, {
   runOnJS,
   withTiming,
   Easing,
+  ReduceMotion,
 } from 'react-native-reanimated';
 import { Gesture, GestureDetector } from 'react-native-gesture-handler';
 import { colors } from '../theme/colors';
@@ -56,22 +57,46 @@ export const CardSwipeView = ({ cards }: { cards: CardType[] }) => {
 
   const handleCardChange = (direction: 'next' | 'previous') => {
     if (direction === 'next') {
-      translateXB.value = withSpring(-SCREEN_WIDTH, {}, isFinished => {
-        if (isFinished) {
-          runOnJS(setCounterWrapper)('increment');
-          translateXB.value = 0;
-          translateXC.value = SCREEN_WIDTH;
-        }
-      });
+      translateXB.value = withSpring(
+        -SCREEN_WIDTH,
+        {
+      mass: 1,
+      damping: 10,
+      stiffness: 500,
+      overshootClamping: false,
+      restDisplacementThreshold: 0.01,
+      restSpeedThreshold: 2,
+      reduceMotion: ReduceMotion.System,
+        },
+        isFinished => {
+          if (isFinished) {
+            runOnJS(setCounterWrapper)('increment');
+            translateXB.value = 0;
+            translateXC.value = SCREEN_WIDTH;
+          }
+        },
+      );
       translateXC.value = withSpring(0);
     } else if (direction === 'previous') {
-      translateXB.value = withSpring(SCREEN_WIDTH, {}, isFinished => {
-        if (isFinished) {
-          runOnJS(setCounterWrapper)('decrement');
-          translateXB.value = 0;
-          translateXA.value = -SCREEN_WIDTH;
-        }
-      });
+      translateXB.value = withSpring(
+        SCREEN_WIDTH,
+        {
+      mass: 1,
+      damping: 10,
+      stiffness: 500,
+      overshootClamping: false,
+      restDisplacementThreshold: 0.01,
+      restSpeedThreshold: 2,
+      reduceMotion: ReduceMotion.System,
+        },
+        isFinished => {
+          if (isFinished) {
+            runOnJS(setCounterWrapper)('decrement');
+            translateXB.value = 0;
+            translateXA.value = -SCREEN_WIDTH;
+          }
+        },
+      );
       translateXA.value = withSpring(0);
     }
   };
@@ -83,9 +108,9 @@ export const CardSwipeView = ({ cards }: { cards: CardType[] }) => {
       translateXC.value = SCREEN_WIDTH + event.translationX;
     })
     .onEnd(() => {
-      if (translateXB.value < -150) {
+      if (translateXB.value < -50) {
         runOnJS(handleCardChange)('next');
-      } else if (translateXB.value > 150) {
+      } else if (translateXB.value > 50) {
         runOnJS(handleCardChange)('previous');
       } else {
         translateXA.value = withSpring(-SCREEN_WIDTH);
