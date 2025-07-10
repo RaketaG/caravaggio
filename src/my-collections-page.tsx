@@ -14,6 +14,7 @@ import { StackParams } from '../App.tsx';
 import { ListItem } from './components/list-item.tsx';
 import { AddButton } from './components/add-button.tsx';
 import { ModalWrapper } from './components/modal-wrapper.tsx';
+import { colors } from './theme/colors.ts';
 
 export const MyCollectionsPage = () => {
   const navigation = useNavigation<NativeStackNavigationProp<StackParams>>();
@@ -136,6 +137,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     paddingHorizontal: 16,
+    backgroundColor: colors.pale_purple[500],
   },
   scrollView: {
     width: '100%',
@@ -143,9 +145,9 @@ const styles = StyleSheet.create({
     overflow: 'visible',
   },
   inputField: {
-    borderWidth: 1,
-    borderColor: '#DDDDDD',
-    backgroundColor: '#FFFFFF',
+    borderWidth: 2,
+    borderColor: colors.night[500],
+    backgroundColor: colors.pale_purple[600],
     borderRadius: 8,
     padding: 16,
     width: '100%',

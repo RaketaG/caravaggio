@@ -18,6 +18,7 @@ import { AddButton } from './components/add-button.tsx';
 import { ModalWrapper } from './components/modal-wrapper.tsx';
 import { useNavigation } from '@react-navigation/native';
 import { TextButton } from './components/text-button.tsx';
+import { colors } from './theme/colors.ts';
 
 export type CardType = {
   id: string;
@@ -42,11 +43,11 @@ export const CardsPage = ({
       <TextButton
         label="Quiz"
         onPress={() =>
-          navigation.navigate('QuizPage', { collectionName: collectionName })
+          cards.length && navigation.navigate('QuizPage', { collectionName: collectionName })
         }
       />
     );
-  }, [collectionName, navigation]);
+  }, [collectionName, navigation, cards]);
 
   useEffect(() => {
     navigation.setOptions({
@@ -165,6 +166,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     paddingHorizontal: 16,
+    backgroundColor: colors.pale_purple[500],
   },
   scrollView: {
     width: '100%',
@@ -172,9 +174,9 @@ const styles = StyleSheet.create({
     overflow: 'visible',
   },
   inputField: {
-    borderWidth: 1,
-    borderColor: '#DDDDDD',
-    backgroundColor: '#FFFFFF',
+    borderWidth: 2,
+    borderColor: colors.night[500],
+    backgroundColor: colors.pale_purple[600],
     borderRadius: 8,
     padding: 16,
     width: '100%',

@@ -7,6 +7,7 @@ import {
 } from 'react-native';
 import { BlueButton } from './blue-button';
 import { TextButton } from './text-button';
+import { colors } from '../theme/colors';
 
 type ModalWrapperType = {
   visible: boolean;
@@ -57,19 +58,11 @@ const styles = StyleSheet.create({
   },
   modalView: {
     width: '100%',
-    borderRadius: 20,
-    borderWidth: 1,
-    borderColor: '#DDDDDD',
-    backgroundColor: '#FFFFFF',
+    borderRadius: 8,
+    borderWidth: 2,
+    borderColor: colors.night[500],
+    backgroundColor: colors.white[500],
     padding: 32,
     alignItems: 'center',
-    shadowColor: '#000',
-    shadowOffset: {
-      width: 0,
-      height: 2,
-    },
-    shadowOpacity: 0.25,
-    shadowRadius: 4,
-    elevation: 5,
   },
 });

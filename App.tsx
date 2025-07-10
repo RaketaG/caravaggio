@@ -8,6 +8,7 @@ import { QuizPage } from './src/quiz-page.tsx';
 import { useCallback } from 'react';
 import { TextButton } from './src/components/text-button.tsx';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
+import { colors } from './src/theme/colors.ts';
 
 export type StackParams = {
   LoginPage: undefined;
@@ -24,7 +25,15 @@ const RootStack = () => {
   }, []);
 
   return (
-    <Stack.Navigator initialRouteName="MyCollectionsPage">
+    <Stack.Navigator 
+      initialRouteName="MyCollectionsPage"
+      screenOptions={{
+        headerStyle: {
+          backgroundColor: colors.light_cyan[500],
+        },
+        headerTintColor: colors.night[500],
+      }}
+      >
       <Stack.Screen
         name="LoginPage"
         component={LoginPage}

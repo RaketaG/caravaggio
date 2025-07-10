@@ -5,6 +5,7 @@ import {
   MenuOptions,
   MenuTrigger,
 } from 'react-native-popup-menu';
+import { colors } from '../theme/colors';
 
 type ListItemType = {
   onDelete?: () => void;
@@ -79,31 +80,30 @@ export const ListItem = ({
 
 const styles = StyleSheet.create({
   listItemContainer: {
-    borderWidth: 1,
-    borderColor: '#DDDDDD',
-    backgroundColor: '#FFFFFF',
+    borderWidth: 2,
+    borderColor: colors.night[500],
+    backgroundColor: colors.white[500],
     borderRadius: 8,
     padding: 16,
     width: '100%',
     fontSize: 16,
     marginBottom: 8,
-    elevation: 3,
   },
   mainText: {
     fontSize: 20,
     fontWeight: 600,
-    color: '#000000',
+    color: colors.night[500],
     marginBottom: 8,
   },
   secondaryText: {
     fontSize: 16,
     fontWeight: 400,
-    color: '#333333',
+    color: colors.night[600],
   },
   textFormat: {
     fontSize: 16,
   },
   deleteText: {
-    color: '#ff383c',
+    color: colors.imperial_red[500],
   },
 });

@@ -9,6 +9,7 @@ import Animated, {
   Easing,
 } from 'react-native-reanimated';
 import { Gesture, GestureDetector } from 'react-native-gesture-handler';
+import { colors } from '../theme/colors';
 
 type CardType = {
   id: string;
@@ -94,7 +95,7 @@ export const CardSwipeView = ({ cards }: { cards: CardType[] }) => {
     });
 
   const longPressGesture = Gesture.LongPress()
-  .minDuration(200)
+    .minDuration(200)
     .onStart(() => {
       cardScale.value = withTiming(1.2, {
         duration: 200,
@@ -120,31 +121,37 @@ export const CardSwipeView = ({ cards }: { cards: CardType[] }) => {
     <View style={styles.container}>
       {/* <GestureDetector gesture={composedGesture}> */}
       <Animated.View style={[styles.card, animatedStyleA]}>
-        {cards[counter - 1] && (
-          <Text style={styles.textView}>
-            {cards[counter - 2 === -1 ? cards.length - 1 : counter - 2].word}
-          </Text>
-        )}
+        <View style={styles.insideCard}>
+          {cards[counter - 1] && (
+            <Text style={styles.textView}>
+              {cards[counter - 2 === -1 ? cards.length - 1 : counter - 2].word}
+            </Text>
+          )}
+        </View>
       </Animated.View>
       {/* </GestureDetector> */}
 
       <GestureDetector gesture={composedGesture}>
         <Animated.View style={[styles.card, animatedStyleB]}>
-          {cards[counter - 1] && (
-            <Text style={styles.textView}>
-              {cards[counter - 1][isDescription ? 'description' : 'word']}
-            </Text>
-          )}
+          <View style={styles.insideCard}>
+            {cards[counter - 1] && (
+              <Text style={styles.textView}>
+                {cards[counter - 1][isDescription ? 'description' : 'word']}
+              </Text>
+            )}
+          </View>
         </Animated.View>
       </GestureDetector>
 
       {/* <GestureDetector gesture={composedGesture}> */}
       <Animated.View style={[styles.card, animatedStyleC]}>
-        {cards[counter - 1] && (
-          <Text style={styles.textView}>
-            {cards[counter % cards.length].word}
-          </Text>
-        )}
+        <View style={styles.insideCard}>
+          {cards[counter - 1] && (
+            <Text style={styles.textView}>
+              {cards[counter % cards.length].word}
+            </Text>
+          )}
+        </View>
       </Animated.View>
       {/* </GestureDetector> */}
     </View>
@@ -161,14 +168,21 @@ const styles = StyleSheet.create({
     position: 'absolute',
     width: '80%',
     height: '30%',
+    padding: 4,
     justifyContent: 'center',
     alignItems: 'center',
     borderRadius: 8,
-    backgroundColor: '#fff',
-    elevation: 4,
-    shadowColor: '#000',
-    shadowOpacity: 0.2,
-    shadowRadius: 5,
+    backgroundColor: colors.white[500],
+    borderColor: colors.night[500],
+    borderWidth: 2,
+  },
+  insideCard: {
+    height: '100%',
+    width: '100%',
+    backgroundColor: colors.periwinkle[500],
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderRadius: 8,
   },
   textView: {
     fontSize: 26,

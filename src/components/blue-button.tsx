@@ -1,4 +1,5 @@
 import { Text, Pressable, StyleSheet } from 'react-native';
+import { colors } from '../theme/colors';
 
 type BlueButtonProps = {
   label: string;
@@ -18,7 +19,7 @@ export const BlueButton = ({ label, onPress }: BlueButtonProps) => {
 
 const styles = StyleSheet.create({
   button: {
-    backgroundColor: '#007AFF',
+    backgroundColor: colors.mindaro[500],
     borderRadius: 8,
     padding: 16,
     width: '100%',
@@ -29,8 +30,8 @@ const styles = StyleSheet.create({
     opacity: 0.6,
   },
   buttonText: {
-    color: '#FFFFFF',
-    fontWeight: '400',
+    color: colors.night[500],
+    fontWeight: '600',
     fontSize: 16,
   },
 });

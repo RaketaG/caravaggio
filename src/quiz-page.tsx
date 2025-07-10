@@ -10,6 +10,7 @@ import { CardType } from './cards-page';
 import { TextButton } from './components/text-button';
 import { useNavigation } from '@react-navigation/native';
 import { CardSwipeView } from './components/card-swipe-view';
+import { colors } from './theme/colors';
 
 export const QuizPage = ({
   route,
@@ -60,5 +61,6 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
+    backgroundColor: colors.pale_purple[500],
   },
 });

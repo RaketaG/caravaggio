@@ -41,7 +41,7 @@ const styles = StyleSheet.create({
     marginTop: -168,
   },
   inputFields: {
-    borderWidth: 1,
+    borderWidth: 2,
     borderColor: '#DDDDDD',
     backgroundColor: '#FFFFFF',
     borderRadius: 8,
