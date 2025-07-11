@@ -1,0 +1,25 @@
+{
+  "migIndex": 1,
+  "data": [
+    {
+      "path": "assets/fonts/Space_Mono/OFL.txt",
+      "sha1": "c1442e3d059a2b4e2f1bb270ab03c6b31b1b56ba"
+    },
+    {
+      "path": "assets/fonts/Space_Mono/SpaceMono-Bold.ttf",
+      "sha1": "9ab8d86623be53ab9fd656e3448d2a6da166d6cf"
+    },
+    {
+      "path": "assets/fonts/Space_Mono/SpaceMono-BoldItalic.ttf",
+      "sha1": "8f0af3f84a15b504c3b1cbc6eac3ffb618e80744"
+    },
+    {
+      "path": "assets/fonts/Space_Mono/SpaceMono-Italic.ttf",
+      "sha1": "1877bf31e582f068f40dbdb5489579294b202dce"
+    },
+    {
+      "path": "assets/fonts/Space_Mono/SpaceMono-Regular.ttf",
+      "sha1": "59d102868a3072bf9034efb4b2a41ff6741a297b"
+    }
+  ]
+}

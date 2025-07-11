@@ -11,6 +11,7 @@ import { TextButton } from './components/text-button';
 import { useNavigation } from '@react-navigation/native';
 import { CardSwipeView } from './components/card-swipe-view';
 import { colors } from './theme/colors';
+import { CustomHeader } from './components/custom-header';
 
 export const QuizPage = ({
   route,
@@ -48,10 +49,15 @@ export const QuizPage = ({
     listCards();
   }, [listCards]);
 
-
   return (
     <View style={styles.container}>
-      <CardSwipeView cards={cards}/>
+      <CustomHeader
+        headerText="Quiz"
+        goBack={() => navigation.goBack()}
+        onAction={() => navigation.popToTop()}
+        actionText="Collections"
+      />
+      <CardSwipeView cards={cards} />
     </View>
   );
 };

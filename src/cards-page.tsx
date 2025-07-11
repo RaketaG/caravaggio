@@ -17,8 +17,8 @@ import { ListItemWrapper } from './components/list-item-wrapper.tsx';
 import { AddButton } from './components/add-button.tsx';
 import { ModalWrapper } from './components/modal-wrapper.tsx';
 import { useNavigation } from '@react-navigation/native';
-import { TextButton } from './components/text-button.tsx';
 import { colors } from './theme/colors.ts';
+import { CustomHeader } from './components/custom-header.tsx';
 
 export type CardType = {
   id: string;
@@ -37,24 +37,6 @@ export const CardsPage = ({
   const [addModalVisibility, setAddModalVisibility] = useState<boolean>(false);
   const [cardId, setCardId] = useState<string>('');
   const [forUpdate, setForUpdate] = useState<boolean>(true);
-
-  const headerRight = useCallback(() => {
-    return (
-      <TextButton
-        label="Quiz"
-        onPress={() =>
-          cards.length &&
-          navigation.navigate('QuizPage', { collectionName: collectionName })
-        }
-      />
-    );
-  }, [collectionName, navigation, cards]);
-
-  useEffect(() => {
-    navigation.setOptions({
-      headerRight: headerRight,
-    });
-  }, [headerRight, navigation]);
 
   const newCard = async () => {
     const db = await getDbConnection();
@@ -128,7 +110,20 @@ export const CardsPage = ({
         />
       </ModalWrapper>
 
-      <ScrollView style={styles.scrollView}>
+      <CustomHeader
+        headerText="Cards"
+        actionText="Quiz"
+        onAction={() => {
+          cards.length &&
+            navigation.navigate('QuizPage', { collectionName: collectionName });
+        }}
+        goBack={() => navigation.goBack()}
+      />
+      <ScrollView
+        style={styles.scrollView}
+        showsVerticalScrollIndicator={false}
+        showsHorizontalScrollIndicator={false}
+      >
         {cards.map((card, index) => {
           return (
             <ListItemWrapper
@@ -166,14 +161,12 @@ export const CardsPage = ({
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    paddingHorizontal: 16,
     backgroundColor: colors.pale_purple[500],
   },
   scrollView: {
     width: '100%',
     paddingTop: 16,
+    paddingHorizontal: 16,
     overflow: 'visible',
   },
   inputField: {

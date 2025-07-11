@@ -9,6 +9,8 @@ import { useCallback } from 'react';
 import { TextButton } from './src/components/text-button.tsx';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { colors } from './src/theme/colors.ts';
+import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
+import { StyleSheet } from 'react-native';
 
 export type StackParams = {
   LoginPage: undefined;
@@ -25,15 +27,16 @@ const RootStack = () => {
   }, []);
 
   return (
-    <Stack.Navigator 
+    <Stack.Navigator
       initialRouteName="MyCollectionsPage"
       screenOptions={{
         headerStyle: {
           backgroundColor: colors.light_cyan[500],
         },
         headerTintColor: colors.night[500],
+        headerShown: false,
       }}
-      >
+    >
       <Stack.Screen
         name="LoginPage"
         component={LoginPage}
@@ -72,9 +75,20 @@ export default function App() {
     <GestureHandlerRootView>
       <MenuProvider>
         <NavigationContainer>
-          <RootStack />
+          <SafeAreaProvider>
+            <SafeAreaView style={styles.safeAreaView} edges={['top']}>
+              <RootStack />
+            </SafeAreaView>
+          </SafeAreaProvider>
         </NavigationContainer>
       </MenuProvider>
     </GestureHandlerRootView>
   );
 }
+
+const styles = StyleSheet.create({
+  safeAreaView: {
+    flex: 1,
+    backgroundColor: colors.light_cyan[500],
+  },
+});

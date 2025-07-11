@@ -15,6 +15,7 @@ import { ListItemWrapper } from './components/list-item-wrapper.tsx';
 import { AddButton } from './components/add-button.tsx';
 import { ModalWrapper } from './components/modal-wrapper.tsx';
 import { colors } from './theme/colors.ts';
+import { CustomHeader } from './components/custom-header.tsx';
 
 export const MyCollectionsPage = () => {
   const navigation = useNavigation<NativeStackNavigationProp<StackParams>>();
@@ -93,7 +94,12 @@ export const MyCollectionsPage = () => {
         />
       </ModalWrapper>
 
-      <ScrollView style={styles.scrollView}>
+      <CustomHeader headerText="Collections" goBack={() => {}}/>
+      <ScrollView
+        style={styles.scrollView}
+        showsVerticalScrollIndicator={false}
+        showsHorizontalScrollIndicator={false}
+      >
         {collections.map((collection, index) => {
           return (
             <ListItemWrapper
@@ -138,12 +144,12 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    paddingHorizontal: 16,
     backgroundColor: colors.pale_purple[500],
   },
   scrollView: {
     width: '100%',
     paddingTop: 16,
+    paddingHorizontal: 16,
     overflow: 'visible',
   },
   inputField: {
