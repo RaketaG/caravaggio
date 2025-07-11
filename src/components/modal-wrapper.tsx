@@ -38,8 +38,8 @@ export const ModalWrapper = ({
           />
           <TextButton
             label="Cancel"
-            color="#ff383c"
-            marginTop={16}
+            color={colors.imperial_red[500]}
+            marginTop={12}
             onPress={onRedButtonPress}
           />
         </View>

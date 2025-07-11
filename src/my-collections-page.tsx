@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useState } from 'react';
-import { StyleSheet, View, TextInput, ScrollView } from 'react-native';
+import { StyleSheet, View, TextInput, ScrollView, Text } from 'react-native';
 import {
   createTable,
   dropTable,
@@ -26,10 +26,12 @@ export const MyCollectionsPage = () => {
   const [oldCollectionName, setOldCollectionName] = useState<string>('');
   const [addModalVisibility, setAddModalVisibility] = useState<boolean>(false);
   const [forUpdate, setForUpdate] = useState<boolean>(true);
+  const [inputError, setInputError] = useState<boolean>(false);
 
   const newCollection = async (collectionName: string) => {
     const db = await getDbConnection();
-    await createTable(db, collectionName);
+    const prettyName = collectionName.trim().replace(/\s+/, "_");
+    await createTable(db, prettyName);
   };
 
   const renameCollection = async (collectionName: string, newName: string) => {
@@ -84,17 +86,32 @@ export const MyCollectionsPage = () => {
         onRedButtonPress={() => {
           setAddModalVisibility(false);
           setNewCollectionName('');
+          setInputError(false);
         }}
       >
+        <View style={styles.inputFieldWrapper}>
         <TextInput
           style={styles.inputField}
           placeholder="Collection name"
           value={newCollectionName}
-          onChangeText={setNewCollectionName}
+          onChangeText={text => {
+            if (/^[a-zA-Z0-9 ]*$/.test(text)) {
+              setInputError(false);
+              setNewCollectionName(text);
+            } else {
+              setInputError(true);
+            }
+          }}
         />
+        {inputError && (
+          <Text style={styles.errorText}>
+            Only use letters, numbers & spaces
+          </Text>
+        )}
+        </View>
       </ModalWrapper>
 
-      <CustomHeader headerText="Collections" goBack={() => {}}/>
+      <CustomHeader headerText="Collections" goBack={() => {}} />
       <ScrollView
         style={styles.scrollView}
         showsVerticalScrollIndicator={false}
@@ -106,7 +123,7 @@ export const MyCollectionsPage = () => {
               key={collection}
               index={index}
               listView="Collection"
-              mainText={collection}
+              mainText={collection.replace('_', ' ')}
               secondaryText={`${cardCount[collection]} Cards`}
               onPress={() =>
                 navigation.navigate('CardsPage', { collectionName: collection })
@@ -152,6 +169,10 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
     overflow: 'visible',
   },
+  inputFieldWrapper: {
+    width: "100%",
+    marginBottom: 16
+  },
   inputField: {
     borderWidth: 2,
     borderColor: colors.night[500],
@@ -160,6 +181,10 @@ const styles = StyleSheet.create({
     padding: 16,
     width: '100%',
     fontSize: 16,
-    marginBottom: 16,
+    fontFamily: 'SpaceMono-Bold',
+  },
+  errorText: {
+    fontFamily: 'SpaceMono-Regular',
+    color: colors.imperial_red[500],
   },
 });

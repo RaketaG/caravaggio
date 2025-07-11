@@ -31,7 +31,7 @@ const styles = StyleSheet.create({
   },
   buttonText: {
     color: colors.night[500],
-    fontWeight: '600',
+    fontFamily: 'SpaceMono-Bold',
     fontSize: 16,
   },
 });
