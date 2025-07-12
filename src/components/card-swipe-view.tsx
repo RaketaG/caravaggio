@@ -1,18 +1,11 @@
 import { useState } from 'react';
 import { View, StyleSheet, Text, Dimensions } from 'react-native';
-import Animated, {
-  useSharedValue,
-  useAnimatedStyle,
-  withSpring,
-  runOnJS,
-  withTiming,
-  Easing,
-  ReduceMotion,
-} from 'react-native-reanimated';
+import Animated, { runOnJS, withTiming } from 'react-native-reanimated';
 import { Gesture, GestureDetector } from 'react-native-gesture-handler';
 import { colors } from '../theme/colors';
+import { useCardAnimationState } from '../hooks/use-card-animation-state';
 
-type CardType = {
+export type CardDataType = {
   id: string;
   word: string;
   description: string;
@@ -20,166 +13,68 @@ type CardType = {
 
 const { width: SCREEN_WIDTH } = Dimensions.get('window');
 
-export const CardSwipeView = ({ cards }: { cards: CardType[] }) => {
-  const [counter, setCounter] = useState<number>(1);
+export const CardSwipeView = ({ cardsData }: { cardsData: CardDataType[] }) => {
+  const [currentIndex, setcurrentIndex] = useState<number>(0);
 
-  const setCounterWrapper = (type: 'increment' | 'decrement') => {
-    if (type === 'increment') {
-      setCounter(prevCount => (prevCount < cards.length ? prevCount + 1 : 1));
-    } else if (type === 'decrement') {
-      setCounter(prevCount => (prevCount > 1 ? prevCount - 1 : cards.length));
-    }
+  const prevIndex = (): number => {
+    return (currentIndex - 1 + cardsData.length) % cardsData.length;
+  };
+  const nextIndex = (): number => {
+    return (currentIndex + 1) % cardsData.length;
   };
 
-  const [isDescription, setIsDescription] = useState<boolean>(false);
+  const aState = useCardAnimationState(-SCREEN_WIDTH, cardsData[prevIndex()]);
+  const bState = useCardAnimationState(0, cardsData[currentIndex]);
+  const cState = useCardAnimationState(SCREEN_WIDTH, cardsData[nextIndex()]);
+  const cards = [aState, bState, cState];
 
-  const translateXA = useSharedValue(-SCREEN_WIDTH);
-  const translateXB = useSharedValue(0);
-  const translateXC = useSharedValue(SCREEN_WIDTH);
-
-  const pressedColor = useSharedValue('#FFFFFF');
-  const cardScale = useSharedValue(1);
-
-  const animatedStyleA = useAnimatedStyle(() => ({
-    backgroundColor: pressedColor.value,
-    transform: [{ translateX: translateXA.value }, { scale: cardScale.value }],
-  }));
-
-  const animatedStyleB = useAnimatedStyle(() => ({
-    backgroundColor: pressedColor.value,
-    transform: [{ translateX: translateXB.value }, { scale: cardScale.value }],
-  }));
-
-  const animatedStyleC = useAnimatedStyle(() => ({
-    backgroundColor: pressedColor.value,
-    transform: [{ translateX: translateXC.value }, { scale: cardScale.value }],
-  }));
-
-  const handleCardChange = (direction: 'next' | 'previous') => {
-    if (direction === 'next') {
-      translateXB.value = withSpring(
-        -SCREEN_WIDTH,
-        {
-      mass: 1,
-      damping: 10,
-      stiffness: 500,
-      overshootClamping: false,
-      restDisplacementThreshold: 0.01,
-      restSpeedThreshold: 2,
-      reduceMotion: ReduceMotion.System,
-        },
-        isFinished => {
-          if (isFinished) {
-            runOnJS(setCounterWrapper)('increment');
-            translateXB.value = 0;
-            translateXC.value = SCREEN_WIDTH;
-          }
-        },
-      );
-      translateXC.value = withSpring(0);
-    } else if (direction === 'previous') {
-      translateXB.value = withSpring(
-        SCREEN_WIDTH,
-        {
-      mass: 1,
-      damping: 10,
-      stiffness: 500,
-      overshootClamping: false,
-      restDisplacementThreshold: 0.01,
-      restSpeedThreshold: 2,
-      reduceMotion: ReduceMotion.System,
-        },
-        isFinished => {
-          if (isFinished) {
-            runOnJS(setCounterWrapper)('decrement');
-            translateXB.value = 0;
-            translateXA.value = -SCREEN_WIDTH;
-          }
-        },
-      );
-      translateXA.value = withSpring(0);
-    }
+  const equalizer = (
+    direction: 1 | -1,
+    cardsToUpdate: ReturnType<typeof useCardAnimationState>[],
+  ) => {
+    setcurrentIndex(prevCount => prevCount + direction);
+    cardsToUpdate.map(card => {
+      card.translateX.value === -SCREEN_WIDTH &&
+        card.setData(cardsData[prevIndex()]);
+      card.translateX.value === SCREEN_WIDTH &&
+        card.setData(cardsData[nextIndex()]);
+    });
   };
 
   const swipeGesture = Gesture.Pan()
-    .onUpdate(event => {
-      translateXA.value = -SCREEN_WIDTH + event.translationX;
-      translateXB.value = event.translationX;
-      translateXC.value = SCREEN_WIDTH + event.translationX;
-    })
-    .onEnd(() => {
-      if (translateXB.value < -50) {
-        runOnJS(handleCardChange)('next');
-      } else if (translateXB.value > 50) {
-        runOnJS(handleCardChange)('previous');
-      } else {
-        translateXA.value = withSpring(-SCREEN_WIDTH);
-        translateXB.value = withSpring(0);
-        translateXC.value = withSpring(SCREEN_WIDTH);
-      }
+  .onEnd(event => {
+    const direction = event.translationX > 0 ? -1 : 1;
+
+    cards.forEach(card => {
+      card.translateX.value =
+        card.translateX.value === -SCREEN_WIDTH * direction
+          ? SCREEN_WIDTH * direction
+          : withTiming(card.translateX.value + -SCREEN_WIDTH * direction);
     });
 
+    runOnJS(equalizer)(direction, cards);
+  });
+
   const longPressGesture = Gesture.LongPress()
-    .minDuration(200)
-    .onStart(() => {
-      cardScale.value = withTiming(1.2, {
-        duration: 200,
-        easing: Easing.bezier(0.31, 0.04, 0.03, 1.04),
-      });
-      pressedColor.value = withTiming('linen', {
-        duration: 500,
-        easing: Easing.bezier(0.31, 0.04, 0.03, 1.04),
-      });
-      runOnJS(setIsDescription)(true);
-    })
-    .onFinalize(() => {
-      cardScale.value = 1;
-      pressedColor.value = '#FFFFFF';
-      runOnJS(setIsDescription)(false);
-    });
+  .minDuration(200)
 
   const composedGesture = Gesture.Race(swipeGesture, longPressGesture);
 
-  console.log(counter);
-
   return (
-    <View style={styles.container}>
-      {/* <GestureDetector gesture={composedGesture}> */}
-      <Animated.View style={[styles.card, animatedStyleA]}>
-        <View style={styles.insideCard}>
-          {cards[counter - 1] && (
-            <Text style={styles.textView}>
-              {cards[counter - 2 === -1 ? cards.length - 1 : counter - 2].word}
-            </Text>
-          )}
-        </View>
-      </Animated.View>
-      {/* </GestureDetector> */}
-
-      <GestureDetector gesture={composedGesture}>
-        <Animated.View style={[styles.card, animatedStyleB]}>
-          <View style={styles.insideCard}>
-            {cards[counter - 1] && (
-              <Text style={styles.textView}>
-                {cards[counter - 1][isDescription ? 'description' : 'word']}
-              </Text>
-            )}
-          </View>
-        </Animated.View>
-      </GestureDetector>
-
-      {/* <GestureDetector gesture={composedGesture}> */}
-      <Animated.View style={[styles.card, animatedStyleC]}>
-        <View style={styles.insideCard}>
-          {cards[counter - 1] && (
-            <Text style={styles.textView}>
-              {cards[counter % cards.length].word}
-            </Text>
-          )}
-        </View>
-      </Animated.View>
-      {/* </GestureDetector> */}
-    </View>
+    <GestureDetector gesture={composedGesture}>
+      <View style={styles.container}>
+        {cards.map((card, index) => {
+          return (
+            <Animated.View
+              key={`${card.data.id}_${index}`}
+              style={[styles.card, card.animatedStyle]}
+            >
+              <Text style={styles.textView}>{card.data.word}</Text>
+            </Animated.View>
+          );
+        })}
+      </View>
+    </GestureDetector>
   );
 };
 
@@ -211,6 +106,6 @@ const styles = StyleSheet.create({
   },
   textView: {
     fontSize: 26,
-    fontWeight: 'bold',
+    fontFamily: 'SpaceMono-Bold',
   },
 });
