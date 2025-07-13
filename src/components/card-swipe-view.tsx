@@ -1,9 +1,10 @@
 import { useState } from 'react';
-import { View, StyleSheet, Text, Dimensions } from 'react-native';
+import { View, StyleSheet, Dimensions } from 'react-native';
 import Animated, { runOnJS, withTiming } from 'react-native-reanimated';
 import { Gesture, GestureDetector } from 'react-native-gesture-handler';
 import { colors } from '../theme/colors';
 import { useCardAnimationState } from '../hooks/use-card-animation-state';
+import { Background_Colors } from './cards-list-item';
 
 export type CardDataType = {
   id: string;
@@ -11,38 +12,40 @@ export type CardDataType = {
   description: string;
 };
 
+export type DirectionType = -1 | 1;
+
 const { width: SCREEN_WIDTH } = Dimensions.get('window');
 
 export const CardSwipeView = ({ cardsData }: { cardsData: CardDataType[] }) => {
+  const [isDescription, setIsDescription] = useState<boolean>(false);
   const [currentIndex, setcurrentIndex] = useState<number>(0);
 
-  const prevIndex = (): number => {
-    return (currentIndex - 1 + cardsData.length) % cardsData.length;
-  };
-  const nextIndex = (): number => {
-    return (currentIndex + 1) % cardsData.length;
+  const indexer = (direction: DirectionType, index?: number): number => {
+    index = index ? index : currentIndex;
+    return direction === -1
+      ? (index - 1 + cardsData.length) % cardsData.length
+      : (index + 1) % cardsData.length;
   };
 
-  const aState = useCardAnimationState(-SCREEN_WIDTH, cardsData[prevIndex()]);
+  const aState = useCardAnimationState(-SCREEN_WIDTH, cardsData[indexer(-1)]);
   const bState = useCardAnimationState(0, cardsData[currentIndex]);
-  const cState = useCardAnimationState(SCREEN_WIDTH, cardsData[nextIndex()]);
+  const cState = useCardAnimationState(SCREEN_WIDTH, cardsData[indexer(1)]);
   const cards = [aState, bState, cState];
 
   const equalizer = (
-    direction: 1 | -1,
+    direction: DirectionType,
     cardsToUpdate: ReturnType<typeof useCardAnimationState>[],
   ) => {
-    setcurrentIndex(prevCount => prevCount + direction);
+    setcurrentIndex(prevCount => indexer(direction, prevCount));
     cardsToUpdate.map(card => {
       card.translateX.value === -SCREEN_WIDTH &&
-        card.setData(cardsData[prevIndex()]);
+        card.setData(cardsData[indexer(-1)]);
       card.translateX.value === SCREEN_WIDTH &&
-        card.setData(cardsData[nextIndex()]);
+        card.setData(cardsData[indexer(1)]);
     });
   };
 
-  const swipeGesture = Gesture.Pan()
-  .onEnd(event => {
+  const swipeGesture = Gesture.Pan().onEnd(event => {
     const direction = event.translationX > 0 ? -1 : 1;
 
     cards.forEach(card => {
@@ -56,7 +59,33 @@ export const CardSwipeView = ({ cardsData }: { cardsData: CardDataType[] }) => {
   });
 
   const longPressGesture = Gesture.LongPress()
-  .minDuration(200)
+    .minDuration(200)
+    .onStart(() => {
+      runOnJS(setIsDescription)(true);
+      cards.forEach(card => {
+        if (card.translateX.value === 0) {
+          card.fontFamily.value = 'SpaceMono-Regular';
+          card.fontSize.value = 16;
+          card.textAlign.value = 'left';
+          card.justifyCard.value = "flex-start"
+          card.pressedColor.value = withTiming(`${colors.fawn[500]}FF`);
+          card.scale.value = withTiming(1.1);
+        }
+      });
+    })
+    .onEnd(() => {
+      runOnJS(setIsDescription)(false);
+      cards.forEach(card => {
+        if (card.translateX.value === 0) {
+          card.fontFamily.value = 'SpaceMono-Bold';
+          card.fontSize.value = 26;
+          card.textAlign.value = 'center';
+          card.justifyCard.value = "center"
+          card.pressedColor.value = '#00000000';
+          card.scale.value = 1;
+        }
+      });
+    });
 
   const composedGesture = Gesture.Race(swipeGesture, longPressGesture);
 
@@ -67,9 +96,22 @@ export const CardSwipeView = ({ cardsData }: { cardsData: CardDataType[] }) => {
           return (
             <Animated.View
               key={`${card.data.id}_${index}`}
-              style={[styles.card, card.animatedStyle]}
+              style={[
+                styles.card,
+                card.animatedStyle,
+                {
+                  backgroundColor:
+                    Background_Colors[currentIndex % Background_Colors.length],
+                },
+              ]}
             >
-              <Text style={styles.textView}>{card.data.word}</Text>
+              <Animated.View
+                style={[styles.insideCard, card.animatedStyleInsiceCard]}
+              >
+                <Animated.Text style={[card.animatedStyleText]}>
+                  {card.data[isDescription ? 'description' : 'word']}
+                </Animated.Text>
+              </Animated.View>
             </Animated.View>
           );
         })}
@@ -92,20 +134,12 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     borderRadius: 8,
-    backgroundColor: colors.white[500],
-    borderColor: colors.night[500],
     borderWidth: 2,
   },
   insideCard: {
     height: '100%',
     width: '100%',
-    backgroundColor: colors.periwinkle[500],
-    justifyContent: 'center',
-    alignItems: 'center',
+    padding: 8,
     borderRadius: 8,
-  },
-  textView: {
-    fontSize: 26,
-    fontFamily: 'SpaceMono-Bold',
   },
 });

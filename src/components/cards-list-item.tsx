@@ -1,7 +1,7 @@
 import { StyleSheet, Text, View } from 'react-native';
 import { colors } from '../theme/colors';
 
-const Background_Colors = [
+export const Background_Colors = [
   colors.periwinkle[500],
   colors.melon[500],
   colors.vanilla[500],
