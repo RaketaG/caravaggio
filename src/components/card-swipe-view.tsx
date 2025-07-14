@@ -4,7 +4,6 @@ import Animated, { runOnJS, withTiming } from 'react-native-reanimated';
 import { Gesture, GestureDetector } from 'react-native-gesture-handler';
 import { colors } from '../theme/colors';
 import { useCardAnimationState } from '../hooks/use-card-animation-state';
-import { Background_Colors } from './cards-list-item';
 
 export type CardDataType = {
   id: string;
@@ -45,7 +44,8 @@ export const CardSwipeView = ({ cardsData }: { cardsData: CardDataType[] }) => {
     });
   };
 
-  const swipeGesture = Gesture.Pan().onEnd(event => {
+  const swipeGesture = Gesture.Pan()
+  .onEnd(event => {
     const direction = event.translationX > 0 ? -1 : 1;
 
     cards.forEach(card => {
@@ -66,8 +66,6 @@ export const CardSwipeView = ({ cardsData }: { cardsData: CardDataType[] }) => {
         if (card.translateX.value === 0) {
           card.fontFamily.value = 'SpaceMono-Regular';
           card.fontSize.value = 16;
-          card.textAlign.value = 'left';
-          card.justifyCard.value = "flex-start"
           card.pressedColor.value = withTiming(`${colors.fawn[500]}FF`);
           card.scale.value = withTiming(1.1);
         }
@@ -79,8 +77,6 @@ export const CardSwipeView = ({ cardsData }: { cardsData: CardDataType[] }) => {
         if (card.translateX.value === 0) {
           card.fontFamily.value = 'SpaceMono-Bold';
           card.fontSize.value = 26;
-          card.textAlign.value = 'center';
-          card.justifyCard.value = "center"
           card.pressedColor.value = '#00000000';
           card.scale.value = 1;
         }
@@ -96,14 +92,7 @@ export const CardSwipeView = ({ cardsData }: { cardsData: CardDataType[] }) => {
           return (
             <Animated.View
               key={`${card.data.id}_${index}`}
-              style={[
-                styles.card,
-                card.animatedStyle,
-                {
-                  backgroundColor:
-                    Background_Colors[currentIndex % Background_Colors.length],
-                },
-              ]}
+              style={[styles.card, card.animatedStyle]}
             >
               <Animated.View
                 style={[styles.insideCard, card.animatedStyleInsiceCard]}
@@ -131,8 +120,7 @@ const styles = StyleSheet.create({
     width: '80%',
     height: '30%',
     padding: 4,
-    justifyContent: 'center',
-    alignItems: 'center',
+    backgroundColor: colors.melon[500],
     borderRadius: 8,
     borderWidth: 2,
   },
@@ -141,5 +129,7 @@ const styles = StyleSheet.create({
     width: '100%',
     padding: 8,
     borderRadius: 8,
+    justifyContent: 'center',
+    alignItems: 'center',
   },
 });
