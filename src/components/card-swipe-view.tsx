@@ -17,10 +17,10 @@ const { width: SCREEN_WIDTH } = Dimensions.get('window');
 
 export const CardSwipeView = ({ cardsData }: { cardsData: CardDataType[] }) => {
   const [isDescription, setIsDescription] = useState<boolean>(false);
-  const [currentIndex, setcurrentIndex] = useState<number>(0);
+  const [currentIndex, setCurrentIndex] = useState<number>(0);
 
   const indexer = (direction: DirectionType, index?: number): number => {
-    index = index ? index : currentIndex;
+    index = index === undefined ? currentIndex : index;
     return direction === -1
       ? (index - 1 + cardsData.length) % cardsData.length
       : (index + 1) % cardsData.length;
@@ -29,34 +29,42 @@ export const CardSwipeView = ({ cardsData }: { cardsData: CardDataType[] }) => {
   const aState = useCardAnimationState(-SCREEN_WIDTH, cardsData[indexer(-1)]);
   const bState = useCardAnimationState(0, cardsData[currentIndex]);
   const cState = useCardAnimationState(SCREEN_WIDTH, cardsData[indexer(1)]);
-  const cards = [aState, bState, cState];
 
-  const equalizer = (
-    direction: DirectionType,
-    cardsToUpdate: ReturnType<typeof useCardAnimationState>[],
-  ) => {
-    setcurrentIndex(prevCount => indexer(direction, prevCount));
-    cardsToUpdate.map(card => {
-      card.translateX.value === -SCREEN_WIDTH &&
-        card.setData(cardsData[indexer(-1)]);
-      card.translateX.value === SCREEN_WIDTH &&
-        card.setData(cardsData[indexer(1)]);
-    });
+  const [cards, setCards] = useState([aState, bState, cState]);
+
+  const equalizer = (direction: DirectionType) => {
+    const nextIndex = indexer(direction);
+
+    const shifted =
+      direction === 1
+        ? [cards[1], cards[2], cards[0]]
+        : [cards[2], cards[0], cards[1]];
+
+    console.log("PrevNextIndex", indexer(-1, nextIndex));
+    console.log("NextIndex", nextIndex);
+    console.log("NextNextIndex", indexer(1, nextIndex));  
+    setCards([
+      { ...shifted[0], data: cardsData[indexer(-1, nextIndex)] },
+      { ...shifted[1], data: cardsData[nextIndex] },
+      { ...shifted[2], data: cardsData[indexer(1, nextIndex)] },
+    ]);
+
+    setCurrentIndex(nextIndex);
   };
 
   const swipeGesture = Gesture.Pan()
-  .onEnd(event => {
-    const direction = event.translationX > 0 ? -1 : 1;
+    .onEnd(event => {
+      const direction = event.translationX > 0 ? -1 : 1;
 
-    cards.forEach(card => {
-      card.translateX.value =
-        card.translateX.value === -SCREEN_WIDTH * direction
-          ? SCREEN_WIDTH * direction
-          : withTiming(card.translateX.value + -SCREEN_WIDTH * direction);
+      cards.forEach((card, index) => {
+        card.translateX.value =
+          index === 1 - direction // 0 | 2
+            ? SCREEN_WIDTH * direction
+            : withTiming(card.translateX.value + -SCREEN_WIDTH * direction);
+      });
+
+      runOnJS(equalizer)(direction);
     });
-
-    runOnJS(equalizer)(direction, cards);
-  });
 
   const longPressGesture = Gesture.LongPress()
     .minDuration(200)
