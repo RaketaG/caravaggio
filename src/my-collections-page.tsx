@@ -30,7 +30,7 @@ export const MyCollectionsPage = () => {
 
   const newCollection = async (collectionName: string) => {
     const db = await getDbConnection();
-    const prettyName = collectionName.trim().replace(/\s+/, "_");
+    const prettyName = collectionName.trim().replace(/\s+/, '_');
     await createTable(db, prettyName);
   };
 
@@ -90,24 +90,24 @@ export const MyCollectionsPage = () => {
         }}
       >
         <View style={styles.inputFieldWrapper}>
-        <TextInput
-          style={styles.inputField}
-          placeholder="Collection name"
-          value={newCollectionName}
-          onChangeText={text => {
-            if (/^[a-zA-Z0-9 ]*$/.test(text)) {
-              setInputError(false);
-              setNewCollectionName(text);
-            } else {
-              setInputError(true);
-            }
-          }}
-        />
-        {inputError && (
-          <Text style={styles.errorText}>
-            Only use letters, numbers & spaces
-          </Text>
-        )}
+          <TextInput
+            style={styles.inputField}
+            placeholder="Collection name"
+            value={newCollectionName}
+            onChangeText={text => {
+              if (/^[a-zA-Z0-9 ]*$/.test(text)) {
+                setInputError(false);
+                setNewCollectionName(text);
+              } else {
+                setInputError(true);
+              }
+            }}
+          />
+          {inputError && (
+            <Text style={styles.errorText}>
+              Only use letters, numbers & spaces
+            </Text>
+          )}
         </View>
       </ModalWrapper>
 
@@ -117,33 +117,44 @@ export const MyCollectionsPage = () => {
         showsVerticalScrollIndicator={false}
         showsHorizontalScrollIndicator={false}
       >
-        {collections.map((collection, index) => {
-          return (
-            <ListItemWrapper
-              key={collection}
-              index={index}
-              listView="Collection"
-              mainText={collection.replace('_', ' ')}
-              secondaryText={`${cardCount[collection]} Cards`}
-              onPress={() =>
-                navigation.navigate('CardsPage', { collectionName: collection })
-              }
-              onDelete={async () => {
-                await deleteCollection(collection);
-                await listCollections();
-              }}
-              onRename={async () => {
-                setForUpdate(true);
-                setNewCollectionName(collection);
-                setOldCollectionName(collection);
-                setAddModalVisibility(true);
-              }}
-              onQuiz={() =>
-                navigation.navigate('QuizPage', { collectionName: collection })
-              }
-            />
-          );
-        })}
+        {collections.length > 0 ? (
+          collections.map((collection, index) => {
+            return (
+              <ListItemWrapper
+                key={collection}
+                index={index}
+                listView="Collection"
+                mainText={collection.replace('_', ' ')}
+                secondaryText={`${cardCount[collection]} Cards`}
+                onPress={() =>
+                  navigation.navigate('CardsPage', {
+                    collectionName: collection,
+                  })
+                }
+                onDelete={async () => {
+                  await deleteCollection(collection);
+                  await listCollections();
+                }}
+                onRename={async () => {
+                  setForUpdate(true);
+                  setNewCollectionName(collection);
+                  setOldCollectionName(collection);
+                  setAddModalVisibility(true);
+                }}
+                onQuiz={() =>
+                  navigation.navigate('QuizPage', {
+                    collectionName: collection,
+                  })
+                }
+              />
+            );
+          })
+        ) : (
+          <Text style={styles.emptyText}>
+            {'You do not have any collections.' +
+              '\n Press the plus button below to add one'}
+          </Text>
+        )}
       </ScrollView>
 
       <AddButton
@@ -170,8 +181,8 @@ const styles = StyleSheet.create({
     overflow: 'visible',
   },
   inputFieldWrapper: {
-    width: "100%",
-    marginBottom: 16
+    width: '100%',
+    marginBottom: 16,
   },
   inputField: {
     borderWidth: 2,
@@ -182,6 +193,11 @@ const styles = StyleSheet.create({
     width: '100%',
     fontSize: 16,
     fontFamily: 'SpaceMono-Bold',
+  },
+  emptyText: {
+    fontFamily: 'SpaceMono-Regular',
+    textAlign: 'center',
+    paddingTop: '70%',
   },
   errorText: {
     fontFamily: 'SpaceMono-Regular',

@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useState } from 'react';
-import { StyleSheet, View, ScrollView, TextInput } from 'react-native';
+import { StyleSheet, View, ScrollView, TextInput, Text } from 'react-native';
 import {
   deleteRecord,
   getDbConnection,
@@ -120,9 +120,9 @@ export const CardsPage = ({
           } else {
             Toast.show({
               type: 'error',
-              text1: 'No Cards Available',
+              text1: 'Quiz Not Available',
               text2: 'Please add at least 2 cards before starting.',
-              position: 'bottom'
+              position: 'bottom',
             });
           }
         }}
@@ -134,28 +134,35 @@ export const CardsPage = ({
         showsVerticalScrollIndicator={false}
         showsHorizontalScrollIndicator={false}
       >
-        {cards.map((card, index) => {
-          return (
-            <ListItemWrapper
-              key={`${card.id}`}
-              listView="Cards"
-              index={index}
-              onDelete={async () => {
-                await deleteCard(card.id);
-                await listCards();
-              }}
-              onPress={async () => {
-                setForUpdate(true);
-                setAddModalVisibility(true);
-                setNewWord(card.word);
-                setNewDescription(card.description);
-                setCardId(card.id);
-              }}
-              mainText={card.word}
-              secondaryText={card.description}
-            />
-          );
-        })}
+        {cards.length > 0 ? (
+          cards.map((card, index) => {
+            return (
+              <ListItemWrapper
+                key={`${card.id}`}
+                listView="Cards"
+                index={index}
+                onDelete={async () => {
+                  await deleteCard(card.id);
+                  await listCards();
+                }}
+                onPress={async () => {
+                  setForUpdate(true);
+                  setAddModalVisibility(true);
+                  setNewWord(card.word);
+                  setNewDescription(card.description);
+                  setCardId(card.id);
+                }}
+                mainText={card.word}
+                secondaryText={card.description}
+              />
+            );
+          })
+        ) : (
+          <Text style={styles.emptyText}>
+            {'You do not have any cards.' +
+              '\n Press the plus button below to add one'}
+          </Text>
+        )}
       </ScrollView>
 
       <AddButton
@@ -192,5 +199,10 @@ const styles = StyleSheet.create({
   descriptionHeight: {
     height: 128,
     textAlignVertical: 'top',
+  },
+  emptyText: {
+    fontFamily: 'SpaceMono-Regular',
+    textAlign: 'center',
+    paddingTop: '70%',
   },
 });
