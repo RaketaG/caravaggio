@@ -19,6 +19,7 @@ import { ModalWrapper } from './components/modal-wrapper.tsx';
 import { useNavigation } from '@react-navigation/native';
 import { colors } from './theme/colors.ts';
 import { CustomHeader } from './components/custom-header.tsx';
+import Toast from 'react-native-toast-message';
 
 export type CardType = {
   id: string;
@@ -114,11 +115,20 @@ export const CardsPage = ({
         headerText="Cards"
         actionText="Quiz"
         onAction={() => {
-          cards.length &&
-            navigation.navigate('QuizPage', { collectionName: collectionName });
+          if (cards.length > 1) {
+            navigation.navigate('QuizPage', { collectionName });
+          } else {
+            Toast.show({
+              type: 'error',
+              text1: 'No Cards Available',
+              text2: 'Please add at least 2 cards before starting.',
+              position: 'bottom'
+            });
+          }
         }}
         goBack={() => navigation.goBack()}
       />
+
       <ScrollView
         style={styles.scrollView}
         showsVerticalScrollIndicator={false}
