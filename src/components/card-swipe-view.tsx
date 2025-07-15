@@ -1,185 +1,119 @@
 import { useState } from 'react';
-import { View, StyleSheet, Text, Dimensions } from 'react-native';
-import Animated, {
-  useSharedValue,
-  useAnimatedStyle,
-  withSpring,
-  runOnJS,
-  withTiming,
-  Easing,
-  ReduceMotion,
-} from 'react-native-reanimated';
+import { View, StyleSheet, Dimensions } from 'react-native';
+import Animated, { runOnJS, withTiming } from 'react-native-reanimated';
 import { Gesture, GestureDetector } from 'react-native-gesture-handler';
 import { colors } from '../theme/colors';
+import { useCardAnimationState } from '../hooks/use-card-animation-state';
 
-type CardType = {
+export type CardDataType = {
   id: string;
   word: string;
   description: string;
 };
 
+export type DirectionType = -1 | 1;
+
 const { width: SCREEN_WIDTH } = Dimensions.get('window');
 
-export const CardSwipeView = ({ cards }: { cards: CardType[] }) => {
-  const [counter, setCounter] = useState<number>(1);
+export const CardSwipeView = ({ cardsData }: { cardsData: CardDataType[] }) => {
+  const [isDescription, setIsDescription] = useState<boolean>(false);
+  const [currentIndex, setCurrentIndex] = useState<number>(0);
 
-  const setCounterWrapper = (type: 'increment' | 'decrement') => {
-    if (type === 'increment') {
-      setCounter(prevCount => (prevCount < cards.length ? prevCount + 1 : 1));
-    } else if (type === 'decrement') {
-      setCounter(prevCount => (prevCount > 1 ? prevCount - 1 : cards.length));
-    }
+  const indexer = (direction: DirectionType, index?: number): number => {
+    index = index === undefined ? currentIndex : index;
+    return direction === -1
+      ? (index - 1 + cardsData.length) % cardsData.length
+      : (index + 1) % cardsData.length;
   };
 
-  const [isDescription, setIsDescription] = useState<boolean>(false);
+  const aState = useCardAnimationState(-SCREEN_WIDTH, cardsData[indexer(-1)]);
+  const bState = useCardAnimationState(0, cardsData[currentIndex]);
+  const cState = useCardAnimationState(SCREEN_WIDTH, cardsData[indexer(1)]);
 
-  const translateXA = useSharedValue(-SCREEN_WIDTH);
-  const translateXB = useSharedValue(0);
-  const translateXC = useSharedValue(SCREEN_WIDTH);
+  const [cards, setCards] = useState([aState, bState, cState]);
 
-  const pressedColor = useSharedValue('#FFFFFF');
-  const cardScale = useSharedValue(1);
+  const equalizer = (direction: DirectionType) => {
+    const nextIndex = indexer(direction);
 
-  const animatedStyleA = useAnimatedStyle(() => ({
-    backgroundColor: pressedColor.value,
-    transform: [{ translateX: translateXA.value }, { scale: cardScale.value }],
-  }));
+    const shifted =
+      direction === 1
+        ? [cards[1], cards[2], cards[0]]
+        : [cards[2], cards[0], cards[1]];
 
-  const animatedStyleB = useAnimatedStyle(() => ({
-    backgroundColor: pressedColor.value,
-    transform: [{ translateX: translateXB.value }, { scale: cardScale.value }],
-  }));
+    console.log("PrevNextIndex", indexer(-1, nextIndex));
+    console.log("NextIndex", nextIndex);
+    console.log("NextNextIndex", indexer(1, nextIndex));  
+    setCards([
+      { ...shifted[0], data: cardsData[indexer(-1, nextIndex)] },
+      { ...shifted[1], data: cardsData[nextIndex] },
+      { ...shifted[2], data: cardsData[indexer(1, nextIndex)] },
+    ]);
 
-  const animatedStyleC = useAnimatedStyle(() => ({
-    backgroundColor: pressedColor.value,
-    transform: [{ translateX: translateXC.value }, { scale: cardScale.value }],
-  }));
-
-  const handleCardChange = (direction: 'next' | 'previous') => {
-    if (direction === 'next') {
-      translateXB.value = withSpring(
-        -SCREEN_WIDTH,
-        {
-      mass: 1,
-      damping: 10,
-      stiffness: 500,
-      overshootClamping: false,
-      restDisplacementThreshold: 0.01,
-      restSpeedThreshold: 2,
-      reduceMotion: ReduceMotion.System,
-        },
-        isFinished => {
-          if (isFinished) {
-            runOnJS(setCounterWrapper)('increment');
-            translateXB.value = 0;
-            translateXC.value = SCREEN_WIDTH;
-          }
-        },
-      );
-      translateXC.value = withSpring(0);
-    } else if (direction === 'previous') {
-      translateXB.value = withSpring(
-        SCREEN_WIDTH,
-        {
-      mass: 1,
-      damping: 10,
-      stiffness: 500,
-      overshootClamping: false,
-      restDisplacementThreshold: 0.01,
-      restSpeedThreshold: 2,
-      reduceMotion: ReduceMotion.System,
-        },
-        isFinished => {
-          if (isFinished) {
-            runOnJS(setCounterWrapper)('decrement');
-            translateXB.value = 0;
-            translateXA.value = -SCREEN_WIDTH;
-          }
-        },
-      );
-      translateXA.value = withSpring(0);
-    }
+    setCurrentIndex(nextIndex);
   };
 
   const swipeGesture = Gesture.Pan()
-    .onUpdate(event => {
-      translateXA.value = -SCREEN_WIDTH + event.translationX;
-      translateXB.value = event.translationX;
-      translateXC.value = SCREEN_WIDTH + event.translationX;
-    })
-    .onEnd(() => {
-      if (translateXB.value < -50) {
-        runOnJS(handleCardChange)('next');
-      } else if (translateXB.value > 50) {
-        runOnJS(handleCardChange)('previous');
-      } else {
-        translateXA.value = withSpring(-SCREEN_WIDTH);
-        translateXB.value = withSpring(0);
-        translateXC.value = withSpring(SCREEN_WIDTH);
-      }
+    .onEnd(event => {
+      const direction = event.translationX > 0 ? -1 : 1;
+
+      cards.forEach((card, index) => {
+        card.translateX.value =
+          index === 1 - direction // 0 | 2
+            ? SCREEN_WIDTH * direction
+            : withTiming(card.translateX.value + -SCREEN_WIDTH * direction);
+      });
+
+      runOnJS(equalizer)(direction);
     });
 
   const longPressGesture = Gesture.LongPress()
     .minDuration(200)
     .onStart(() => {
-      cardScale.value = withTiming(1.2, {
-        duration: 200,
-        easing: Easing.bezier(0.31, 0.04, 0.03, 1.04),
-      });
-      pressedColor.value = withTiming('linen', {
-        duration: 500,
-        easing: Easing.bezier(0.31, 0.04, 0.03, 1.04),
-      });
       runOnJS(setIsDescription)(true);
+      cards.forEach(card => {
+        if (card.translateX.value === 0) {
+          card.fontFamily.value = 'SpaceMono-Regular';
+          card.fontSize.value = 16;
+          card.pressedColor.value = withTiming(`${colors.fawn[500]}FF`);
+          card.scale.value = withTiming(1.1);
+        }
+      });
     })
-    .onFinalize(() => {
-      cardScale.value = 1;
-      pressedColor.value = '#FFFFFF';
+    .onEnd(() => {
       runOnJS(setIsDescription)(false);
+      cards.forEach(card => {
+        if (card.translateX.value === 0) {
+          card.fontFamily.value = 'SpaceMono-Bold';
+          card.fontSize.value = 26;
+          card.pressedColor.value = '#00000000';
+          card.scale.value = 1;
+        }
+      });
     });
 
   const composedGesture = Gesture.Race(swipeGesture, longPressGesture);
 
-  console.log(counter);
-
   return (
-    <View style={styles.container}>
-      {/* <GestureDetector gesture={composedGesture}> */}
-      <Animated.View style={[styles.card, animatedStyleA]}>
-        <View style={styles.insideCard}>
-          {cards[counter - 1] && (
-            <Text style={styles.textView}>
-              {cards[counter - 2 === -1 ? cards.length - 1 : counter - 2].word}
-            </Text>
-          )}
-        </View>
-      </Animated.View>
-      {/* </GestureDetector> */}
-
-      <GestureDetector gesture={composedGesture}>
-        <Animated.View style={[styles.card, animatedStyleB]}>
-          <View style={styles.insideCard}>
-            {cards[counter - 1] && (
-              <Text style={styles.textView}>
-                {cards[counter - 1][isDescription ? 'description' : 'word']}
-              </Text>
-            )}
-          </View>
-        </Animated.View>
-      </GestureDetector>
-
-      {/* <GestureDetector gesture={composedGesture}> */}
-      <Animated.View style={[styles.card, animatedStyleC]}>
-        <View style={styles.insideCard}>
-          {cards[counter - 1] && (
-            <Text style={styles.textView}>
-              {cards[counter % cards.length].word}
-            </Text>
-          )}
-        </View>
-      </Animated.View>
-      {/* </GestureDetector> */}
-    </View>
+    <GestureDetector gesture={composedGesture}>
+      <View style={styles.container}>
+        {cards.map((card, index) => {
+          return (
+            <Animated.View
+              key={`${card.data.id}_${index}`}
+              style={[styles.card, card.animatedStyle]}
+            >
+              <Animated.View
+                style={[styles.insideCard, card.animatedStyleInsiceCard]}
+              >
+                <Animated.Text style={[card.animatedStyleText]}>
+                  {card.data[isDescription ? 'description' : 'word']}
+                </Animated.Text>
+              </Animated.View>
+            </Animated.View>
+          );
+        })}
+      </View>
+    </GestureDetector>
   );
 };
 
@@ -194,23 +128,16 @@ const styles = StyleSheet.create({
     width: '80%',
     height: '30%',
     padding: 4,
-    justifyContent: 'center',
-    alignItems: 'center',
+    backgroundColor: colors.melon[500],
     borderRadius: 8,
-    backgroundColor: colors.white[500],
-    borderColor: colors.night[500],
     borderWidth: 2,
   },
   insideCard: {
     height: '100%',
     width: '100%',
-    backgroundColor: colors.periwinkle[500],
+    padding: 8,
+    borderRadius: 8,
     justifyContent: 'center',
     alignItems: 'center',
-    borderRadius: 8,
-  },
-  textView: {
-    fontSize: 26,
-    fontWeight: 'bold',
   },
 });

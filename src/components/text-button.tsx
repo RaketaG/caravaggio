@@ -41,7 +41,7 @@ export const TextButton = ({
 const styles = StyleSheet.create({
   createOneButtonText: {
     color: '#007AFF',
-    fontWeight: '400',
+    fontFamily: 'SpaceMono-Bold',
     fontSize: 16,
   },
   createOneButtonTextPressed: {
