@@ -5,7 +5,7 @@ import {
   StyleSheet,
   View,
 } from 'react-native';
-import { BlueButton } from './blue-button';
+import { BlueButton } from './green-button';
 import { TextButton } from './text-button';
 import { colors } from '../theme/colors';
 

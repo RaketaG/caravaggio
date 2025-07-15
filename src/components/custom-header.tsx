@@ -1,6 +1,7 @@
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 import { colors } from '../theme/colors';
 import { IconBack } from '../../assets/icon-back';
+import { SafeAreaView } from 'react-native-safe-area-context';
 
 type CustomerHeaderType = {
   goBack?: () => void;
@@ -16,35 +17,41 @@ export const CustomHeader = ({
   goBack,
 }: CustomerHeaderType) => {
   return (
-    <View style={styles.container}>
-      {goBack && (
-        <Pressable
-          style={({ pressed }) => [
-            styles.backButton,
-            pressed && styles.buttonPressed,
-          ]}
-          onPress={goBack}
-        >
-          <IconBack color={colors.night[500]} />
-        </Pressable>
-      )}
-      <Text style={styles.headerText}>{headerText}</Text>
-      {onAction && (
-        <Pressable
-          style={({ pressed }) => [
-            styles.actionButton,
-            pressed && styles.buttonPressed,
-          ]}
-          onPress={onAction}
-        >
-          <Text style={styles.actionText}>{actionText}</Text>
-        </Pressable>
-      )}
-    </View>
+    <SafeAreaView style={styles.safeAreaView} edges={['top']}>
+      <View style={styles.container}>
+        {goBack && (
+          <Pressable
+            style={({ pressed }) => [
+              styles.backButton,
+              pressed && styles.buttonPressed,
+            ]}
+            onPress={goBack}
+          >
+            <IconBack color={colors.night[500]} />
+          </Pressable>
+        )}
+        <Text style={styles.headerText}>{headerText}</Text>
+        {onAction && (
+          <Pressable
+            style={({ pressed }) => [
+              styles.actionButton,
+              pressed && styles.buttonPressed,
+            ]}
+            onPress={onAction}
+          >
+            <Text style={styles.actionText}>{actionText}</Text>
+          </Pressable>
+        )}
+      </View>
+    </SafeAreaView>
   );
 };
 
 const styles = StyleSheet.create({
+  safeAreaView: {
+    width: "100%",
+    backgroundColor: colors.light_cyan[500],
+  },
   container: {
     width: '100%',
     backgroundColor: colors.light_cyan[500],

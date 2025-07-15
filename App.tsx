@@ -9,8 +9,7 @@ import { useCallback } from 'react';
 import { TextButton } from './src/components/text-button.tsx';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { colors } from './src/theme/colors.ts';
-import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
-import { StyleSheet } from 'react-native';
+import { SafeAreaProvider } from 'react-native-safe-area-context';
 
 export type StackParams = {
   LoginPage: undefined;
@@ -76,19 +75,10 @@ export default function App() {
       <MenuProvider>
         <NavigationContainer>
           <SafeAreaProvider>
-            <SafeAreaView style={styles.safeAreaView} edges={['top']}>
-              <RootStack />
-            </SafeAreaView>
+            <RootStack />
           </SafeAreaProvider>
         </NavigationContainer>
       </MenuProvider>
     </GestureHandlerRootView>
   );
 }
-
-const styles = StyleSheet.create({
-  safeAreaView: {
-    flex: 1,
-    backgroundColor: colors.light_cyan[500],
-  },
-});

@@ -51,8 +51,10 @@ export const QuizPage = ({
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    overflow: "hidden",
     justifyContent: 'center',
     alignItems: 'center',
     backgroundColor: colors.pale_purple[500],
   },
 });
+``

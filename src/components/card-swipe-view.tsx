@@ -58,11 +58,15 @@ export const CardSwipeView = ({ cardsData }: { cardsData: CardDataType[] }) => {
     })
     .onEnd(event => {
       const direction = event.translationX > 0 ? -1 : 1;
-      cards[1 - direction].translateX.value = SCREEN_WIDTH * direction;
-      cards[1 + direction].translateX.value = withTiming(0);
-      cards[1].translateX.value = withTiming(-SCREEN_WIDTH * direction);
+      if (Math.abs(event.translationX) > 25) {
+        cards[1 - direction].translateX.value = SCREEN_WIDTH * direction;
+        cards[1 + direction].translateX.value = withTiming(0);
+        cards[1].translateX.value = withTiming(-SCREEN_WIDTH * direction);
 
-      runOnJS(equalizer)(direction);
+        runOnJS(equalizer)(direction);
+      } else {
+        cards[1].translateX.value = withTiming(0);
+      }
     });
 
   const longPressGesture = Gesture.LongPress()

@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { StyleSheet, View, Text, TextInput } from 'react-native';
-import { BlueButton } from './components/blue-button';
+import { BlueButton } from './components/green-button';
 import { TextButton } from './components/text-button';
 
 export const LoginPage = () => {
