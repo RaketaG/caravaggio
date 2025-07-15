@@ -40,9 +40,6 @@ export const CardSwipeView = ({ cardsData }: { cardsData: CardDataType[] }) => {
         ? [cards[1], cards[2], cards[0]]
         : [cards[2], cards[0], cards[1]];
 
-    console.log("PrevNextIndex", indexer(-1, nextIndex));
-    console.log("NextIndex", nextIndex);
-    console.log("NextNextIndex", indexer(1, nextIndex));  
     setCards([
       { ...shifted[0], data: cardsData[indexer(-1, nextIndex)] },
       { ...shifted[1], data: cardsData[nextIndex] },
@@ -53,15 +50,17 @@ export const CardSwipeView = ({ cardsData }: { cardsData: CardDataType[] }) => {
   };
 
   const swipeGesture = Gesture.Pan()
+    .onUpdate(event => {
+      cards[1].translateX.value = event.translationX;
+      event.translationX > 0
+        ? (cards[0].translateX.value = event.translationX - SCREEN_WIDTH)
+        : (cards[2].translateX.value = event.translationX + SCREEN_WIDTH);
+    })
     .onEnd(event => {
       const direction = event.translationX > 0 ? -1 : 1;
-
-      cards.forEach((card, index) => {
-        card.translateX.value =
-          index === 1 - direction // 0 | 2
-            ? SCREEN_WIDTH * direction
-            : withTiming(card.translateX.value + -SCREEN_WIDTH * direction);
-      });
+      cards[1 - direction].translateX.value = SCREEN_WIDTH * direction;
+      cards[1 + direction].translateX.value = withTiming(0);
+      cards[1].translateX.value = withTiming(-SCREEN_WIDTH * direction);
 
       runOnJS(equalizer)(direction);
     });
