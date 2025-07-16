@@ -71,40 +71,33 @@ export const CardSwipeView = ({ cardsData }: { cardsData: CardDataType[] }) => {
 
   const longPressGesture = Gesture.LongPress()
     .minDuration(200)
+    .maxDistance(20)
     .onStart(() => {
       runOnJS(setIsDescription)(true);
-      cards.forEach(card => {
-        if (card.translateX.value === 0) {
-          card.fontFamily.value = 'SpaceMono-Regular';
-          card.fontSize.value = 16;
-          card.pressedColor.value = withTiming(`${colors.fawn[500]}FF`);
-          card.scale.value = withTiming(1.1);
-        }
-      });
+      cards[1].fontFamily.value = 'SpaceMono-Regular';
+      cards[1].fontSize.value = 16;
+      cards[1].pressedColor.value = withTiming(`${colors.fawn[500]}FF`);
+      cards[1].scale.value = withTiming(1.1);
     })
     .onEnd(() => {
       runOnJS(setIsDescription)(false);
-      cards.forEach(card => {
-        if (card.translateX.value === 0) {
-          card.fontFamily.value = 'SpaceMono-Bold';
-          card.fontSize.value = 26;
-          card.pressedColor.value = '#00000000';
-          card.scale.value = 1;
-        }
-      });
+      cards[1].fontFamily.value = 'SpaceMono-Bold';
+      cards[1].fontSize.value = 26;
+      cards[1].pressedColor.value = '#00000000';
+      cards[1].scale.value = 1;
     });
 
   const composedGesture = Gesture.Race(swipeGesture, longPressGesture);
 
   return (
-    <GestureDetector gesture={composedGesture}>
-      <View style={styles.container}>
-        {cards.map((card, index) => {
-          return (
-            <Animated.View
-              key={`${card.data.id}_${index}`}
-              style={[styles.card, card.animatedStyle]}
-            >
+    <View style={styles.container}>
+      {cards.map((card, index) => {
+        return (
+          <GestureDetector
+            key={`${card.data.id}_${index}`}
+            gesture={composedGesture}
+          >
+            <Animated.View style={[styles.card, card.animatedStyle]}>
               <Animated.View
                 style={[styles.insideCard, card.animatedStyleInsiceCard]}
               >
@@ -113,10 +106,10 @@ export const CardSwipeView = ({ cardsData }: { cardsData: CardDataType[] }) => {
                 </Animated.Text>
               </Animated.View>
             </Animated.View>
-          );
-        })}
-      </View>
-    </GestureDetector>
+          </GestureDetector>
+        );
+      })}
+    </View>
   );
 };
 
