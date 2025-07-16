@@ -1,10 +1,10 @@
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { NavigationContainer } from '@react-navigation/native';
-import { MyCollectionsPage } from './src/my-collections-page.tsx';
-import { CardsPage } from './src/cards-page.tsx';
-import { LoginPage } from './src/login-page.tsx';
+import { MyCollectionsPage } from './src/screens/my-collections-page.tsx';
+import { CardsPage } from './src/screens/cards-page.tsx';
+import { LoginPage } from './src/screens/login-page.tsx';
 import { MenuProvider } from 'react-native-popup-menu';
-import { QuizPage } from './src/quiz-page.tsx';
+import { QuizPage } from './src/screens/quiz-page.tsx';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import Toast from 'react-native-toast-message';

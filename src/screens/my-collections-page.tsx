@@ -7,15 +7,15 @@ import {
   listTables,
   numberOfRecords,
   renameTable,
-} from './db-service';
+} from '../services/db-service.ts';
 import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
-import { StackParams } from '../App.tsx';
-import { ListItemWrapper } from './components/list-item-wrapper.tsx';
-import { AddButton } from './components/add-button.tsx';
-import { ModalWrapper } from './components/modal-wrapper.tsx';
-import { colors } from './theme/colors.ts';
-import { CustomHeader } from './components/custom-header.tsx';
+import { StackParams } from '../../App.tsx';
+import { ListItemWrapper } from '../components/list-item-wrapper.tsx';
+import { AddButton } from '../components/add-button.tsx';
+import { ModalWrapper } from '../components/modal-wrapper.tsx';
+import { colors } from '../theme/colors.ts';
+import { CustomHeader } from '../components/custom-header.tsx';
 import Toast from 'react-native-toast-message';
 
 export const MyCollectionsPage = () => {

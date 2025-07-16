@@ -1,15 +1,15 @@
 import { useCallback, useEffect, useState } from 'react';
 import { View, StyleSheet } from 'react-native';
-import { getDbConnection, listRecords } from './db-service';
+import { getDbConnection, listRecords } from '../services/db-service';
 import {
   NativeStackNavigationProp,
   NativeStackScreenProps,
 } from '@react-navigation/native-stack';
-import { StackParams } from '../App';
+import { StackParams } from '../../App';
 import { useNavigation } from '@react-navigation/native';
-import { CardDataType, CardSwipeView } from './components/card-swipe-view';
-import { colors } from './theme/colors';
-import { CustomHeader } from './components/custom-header';
+import { CardDataType, CardSwipeView } from '../components/card-swipe-view';
+import { colors } from '../theme/colors';
+import { CustomHeader } from '../components/custom-header';
 
 export const QuizPage = ({
   route,

@@ -6,19 +6,19 @@ import {
   insertRecord,
   listRecords,
   updateRecord,
-} from './db-service.ts';
-import { StackParams } from '../App.tsx';
+} from '../services/db-service.ts';
+import { StackParams } from '../../App.tsx';
 import {
   NativeStackNavigationProp,
   NativeStackScreenProps,
 } from '@react-navigation/native-stack';
 import uuid from 'react-native-uuid';
-import { ListItemWrapper } from './components/list-item-wrapper.tsx';
-import { AddButton } from './components/add-button.tsx';
-import { ModalWrapper } from './components/modal-wrapper.tsx';
+import { ListItemWrapper } from '../components/list-item-wrapper.tsx';
+import { AddButton } from '../components/add-button.tsx';
+import { ModalWrapper } from '../components/modal-wrapper.tsx';
 import { useNavigation } from '@react-navigation/native';
-import { colors } from './theme/colors.ts';
-import { CustomHeader } from './components/custom-header.tsx';
+import { colors } from '../theme/colors.ts';
+import { CustomHeader } from '../components/custom-header.tsx';
 import Toast from 'react-native-toast-message';
 
 export type CardType = {
