@@ -54,6 +54,7 @@ const styles = StyleSheet.create({
   },
   container: {
     width: '100%',
+    height: Platform.OS === "android" ? 64 : 40,
     backgroundColor: colors.light_cyan[500],
     flexDirection: 'row',
     alignItems: 'center',

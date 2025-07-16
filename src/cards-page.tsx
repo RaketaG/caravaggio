@@ -99,12 +99,14 @@ export const CardsPage = ({
         <TextInput
           style={styles.inputField}
           placeholder="Word"
+          placeholderTextColor={colors.night[700]}
           value={newWord}
           onChangeText={setNewWord}
         />
         <TextInput
           style={[styles.inputField, styles.descriptionHeight]}
           placeholder="Description"
+          placeholderTextColor={colors.night[700]}
           multiline={true}
           value={newDescription}
           onChangeText={setNewDescription}
@@ -194,6 +196,7 @@ const styles = StyleSheet.create({
     padding: 16,
     width: '100%',
     fontSize: 16,
+    fontFamily: "SpaceMono-Bold",
     marginBottom: 16,
   },
   descriptionHeight: {
@@ -201,7 +204,7 @@ const styles = StyleSheet.create({
     textAlignVertical: 'top',
   },
   emptyText: {
-    fontFamily: 'SpaceMono-Regular',
+    fontFamily: 'SpaceMono-Bold',
     textAlign: 'center',
     paddingTop: '70%',
     color: colors.night[700],

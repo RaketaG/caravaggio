@@ -51,7 +51,6 @@ export const MyCollectionsPage = () => {
     const collectionListQuery = await listTables(db);
 
     const names: string[] = [];
-    const counts: { [key: string]: number } = {};
 
     collectionListQuery.forEach(result => {
       for (let i = 0; i < result.rows.length; i++) {
@@ -59,18 +58,27 @@ export const MyCollectionsPage = () => {
       }
     });
 
-    for (const name of names) {
+    setCollections(names);
+  }, []);
+
+  const cardCountRetriever = async () => {
+    const db = await getDbConnection();
+
+    const counts: { [key: string]: number } = {};
+
+    for (const name of collections) {
       const result = await numberOfRecords(db, name);
       counts[name] = result.rows.item(0).count;
     }
 
-    setCollections(names);
     setCardCount(counts);
-  }, []);
+  };
 
   useEffect(() => {
     listCollections();
   }, [listCollections]);
+
+  cardCountRetriever();
 
   return (
     <View style={styles.container}>
@@ -95,6 +103,7 @@ export const MyCollectionsPage = () => {
           <TextInput
             style={styles.inputField}
             placeholder="Collection name"
+            placeholderTextColor={colors.night[700]}
             value={newCollectionName.replaceAll('_', ' ')}
             onChangeText={text => {
               if (/^[a-zA-Z0-9 ]*$/.test(text)) {
@@ -113,7 +122,7 @@ export const MyCollectionsPage = () => {
         </View>
       </ModalWrapper>
 
-      <CustomHeader headerText="Collections" goBack={() => {}} />
+      <CustomHeader headerText="Collections" />
       <ScrollView
         style={styles.scrollView}
         showsVerticalScrollIndicator={false}
@@ -207,6 +216,7 @@ const styles = StyleSheet.create({
     fontFamily: 'SpaceMono-Regular',
     textAlign: 'center',
     paddingTop: '70%',
+    color: colors.night[700],
   },
   errorText: {
     fontFamily: 'SpaceMono-Regular',
