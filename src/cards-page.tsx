@@ -204,5 +204,6 @@ const styles = StyleSheet.create({
     fontFamily: 'SpaceMono-Regular',
     textAlign: 'center',
     paddingTop: '70%',
+    color: colors.night[700],
   },
 });

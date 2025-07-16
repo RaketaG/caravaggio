@@ -16,6 +16,7 @@ import { AddButton } from './components/add-button.tsx';
 import { ModalWrapper } from './components/modal-wrapper.tsx';
 import { colors } from './theme/colors.ts';
 import { CustomHeader } from './components/custom-header.tsx';
+import Toast from 'react-native-toast-message';
 
 export const MyCollectionsPage = () => {
   const navigation = useNavigation<NativeStackNavigationProp<StackParams>>();
@@ -30,13 +31,14 @@ export const MyCollectionsPage = () => {
 
   const newCollection = async (collectionName: string) => {
     const db = await getDbConnection();
-    const prettyName = collectionName.trim().replace(/\s+/, '_');
+    const prettyName = collectionName.trim().replaceAll(/\s+/g, '_');
     await createTable(db, prettyName);
   };
 
   const renameCollection = async (collectionName: string, newName: string) => {
     const db = await getDbConnection();
-    await renameTable(db, collectionName, newName);
+    const prettyName = newName.trim().replaceAll(/\s+/g, '_');
+    await renameTable(db, collectionName, prettyName);
   };
 
   const deleteCollection = async (collectionName: string) => {
@@ -93,7 +95,7 @@ export const MyCollectionsPage = () => {
           <TextInput
             style={styles.inputField}
             placeholder="Collection name"
-            value={newCollectionName}
+            value={newCollectionName.replaceAll('_', ' ')}
             onChangeText={text => {
               if (/^[a-zA-Z0-9 ]*$/.test(text)) {
                 setInputError(false);
@@ -124,7 +126,7 @@ export const MyCollectionsPage = () => {
                 key={collection}
                 index={index}
                 listView="Collection"
-                mainText={collection.replace('_', ' ')}
+                mainText={collection.replaceAll('_', ' ')}
                 secondaryText={`${cardCount[collection]} Cards`}
                 onPress={() =>
                   navigation.navigate('CardsPage', {
@@ -142,9 +144,16 @@ export const MyCollectionsPage = () => {
                   setAddModalVisibility(true);
                 }}
                 onQuiz={() =>
-                  navigation.navigate('QuizPage', {
-                    collectionName: collection,
-                  })
+                  cardCount[collection] > 1
+                    ? navigation.navigate('QuizPage', {
+                        collectionName: collection,
+                      })
+                    : Toast.show({
+                        type: 'error',
+                        text1: 'Quiz Not Available',
+                        text2: 'Please add at least 2 cards before starting.',
+                        position: 'bottom',
+                      })
                 }
               />
             );

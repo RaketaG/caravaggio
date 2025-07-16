@@ -1,4 +1,4 @@
-import { Pressable, StyleSheet, Text, View } from 'react-native';
+import { Pressable, StyleSheet, Text, View, Platform } from 'react-native';
 import { colors } from '../theme/colors';
 import { IconBack } from '../../assets/icon-back';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -60,6 +60,7 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     paddingHorizontal: 16,
     paddingBottom: 8,
+    paddingTop: Platform.OS === "android" ? 8 : 0,
     zIndex: 1,
   },
   backButton: {
