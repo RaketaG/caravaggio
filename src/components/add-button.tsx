@@ -12,7 +12,7 @@ export const AddButton = ({ onPress }: ListItemType) => {
       style={({ pressed }) => [styles.button, pressed && styles.buttonPressed]}
       onPress={onPress}
     >
-      <IconAdd color={colors.night[500]}/>
+      <IconAdd color={colors.night["standard"]}/>
     </Pressable>
   );
 };
@@ -22,7 +22,7 @@ const styles = StyleSheet.create({
     position: 'absolute',
     right: 42,
     bottom: 64,
-    backgroundColor: colors.fawn[500],
+    backgroundColor: colors.fawn,
     justifyContent: 'center',
     alignItems: 'center',
     width: 60,

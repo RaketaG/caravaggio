@@ -103,7 +103,7 @@ export const MyCollectionsPage = () => {
           <TextInput
             style={styles.inputField}
             placeholder="Collection name"
-            placeholderTextColor={colors.night[700]}
+            placeholderTextColor={colors.night["placeholder"]}
             value={newCollectionName.replaceAll('_', ' ')}
             onChangeText={text => {
               if (/^[a-zA-Z0-9 ]*$/.test(text)) {
@@ -190,7 +190,7 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: colors.pale_purple[500],
+    backgroundColor: colors.pale_purple["standard"],
   },
   scrollView: {
     width: '100%',
@@ -204,8 +204,8 @@ const styles = StyleSheet.create({
   },
   inputField: {
     borderWidth: 2,
-    borderColor: colors.night[500],
-    backgroundColor: colors.pale_purple[600],
+    borderColor: colors.night["standard"],
+    backgroundColor: colors.pale_purple["light"],
     borderRadius: 8,
     padding: 16,
     width: '100%',
@@ -216,10 +216,10 @@ const styles = StyleSheet.create({
     fontFamily: 'SpaceMono-Regular',
     textAlign: 'center',
     paddingTop: '70%',
-    color: colors.night[700],
+    color: colors.night["placeholder"],
   },
   errorText: {
     fontFamily: 'SpaceMono-Regular',
-    color: colors.imperial_red[500],
+    color: colors.imperialRed,
   },
 });

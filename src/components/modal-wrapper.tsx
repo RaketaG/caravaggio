@@ -38,7 +38,7 @@ export const ModalWrapper = ({
           />
           <TextButton
             label="Cancel"
-            color={colors.imperial_red[500]}
+            color={colors.imperialRed}
             marginTop={12}
             onPress={onRedButtonPress}
           />
@@ -60,8 +60,8 @@ const styles = StyleSheet.create({
     width: '100%',
     borderRadius: 8,
     borderWidth: 2,
-    borderColor: colors.night[500],
-    backgroundColor: colors.white[500],
+    borderColor: colors.night.standard,
+    backgroundColor: colors.white,
     padding: 32,
     alignItems: 'center',
   },

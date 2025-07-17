@@ -2,10 +2,10 @@ import { StyleSheet, Text, View } from 'react-native';
 import { colors } from '../theme/colors';
 
 export const Background_Colors = [
-  colors.periwinkle[500],
-  colors.melon[500],
-  colors.vanilla[500],
-  colors.light_cyan[500],
+  colors.periwinkle,
+  colors.melon,
+  colors.vanilla,
+  colors.lightCyan,
 ];
 
 export const CardsListItem = ({
@@ -42,15 +42,15 @@ export const CardsListItem = ({
 const styles = StyleSheet.create({
   listItemContainer: {
     borderWidth: 2,
-    borderColor: colors.night[500],
-    backgroundColor: colors.white[500],
+    borderColor: colors.night.standard,
+    backgroundColor: colors.white,
     borderRadius: 8,
     width: '100%',
     marginBottom: 8,
   },
   mainTextContainer: {
     borderRadius: 8,
-    borderColor: colors.white[500],
+    borderColor: colors.white,
     borderWidth: 2,
     width: '100%',
     padding: 8,
@@ -61,7 +61,7 @@ const styles = StyleSheet.create({
   mainText: {
     fontSize: 18,
     fontFamily: 'SpaceMono-Bold',
-    color: colors.night[500],
+    color: colors.night.standard,
   },
   secondaryTextContainer: {
     paddingHorizontal: 8,
@@ -72,6 +72,6 @@ const styles = StyleSheet.create({
   secondaryText: {
     fontSize: 14,
     fontFamily: 'SpaceMono-Regular',
-    color: colors.night[600],
+    color: colors.night.light,
   },
 });

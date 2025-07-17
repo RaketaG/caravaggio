@@ -19,8 +19,8 @@ export const CollectionListItem = ({
 const styles = StyleSheet.create({
   listItemContainer: {
     borderWidth: 2,
-    borderColor: colors.night[500],
-    backgroundColor: colors.white[500],
+    borderColor: colors.night.standard,
+    backgroundColor: colors.white,
     borderRadius: 8,
     padding: 8,
     width: '100%',
@@ -30,12 +30,12 @@ const styles = StyleSheet.create({
   mainText: {
     fontSize: 22,
     fontFamily: 'SpaceMono-Bold',
-    color: colors.night[500],
+    color: colors.night.standard,
     marginBottom: 4,
   },
   secondaryText: {
     fontSize: 16,
     fontFamily: 'SpaceMono-Bold',
-    color: colors.night[600],
+    color: colors.night.light,
   },
 });

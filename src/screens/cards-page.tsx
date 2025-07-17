@@ -99,14 +99,14 @@ export const CardsPage = ({
         <TextInput
           style={styles.inputField}
           placeholder="Word"
-          placeholderTextColor={colors.night[700]}
+          placeholderTextColor={colors.night.placeholder}
           value={newWord}
           onChangeText={setNewWord}
         />
         <TextInput
           style={[styles.inputField, styles.descriptionHeight]}
           placeholder="Description"
-          placeholderTextColor={colors.night[700]}
+          placeholderTextColor={colors.night.placeholder}
           multiline={true}
           value={newDescription}
           onChangeText={setNewDescription}
@@ -180,7 +180,7 @@ export const CardsPage = ({
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: colors.pale_purple[500],
+    backgroundColor: colors.pale_purple.standard,
   },
   scrollView: {
     width: '100%',
@@ -190,8 +190,8 @@ const styles = StyleSheet.create({
   },
   inputField: {
     borderWidth: 2,
-    borderColor: colors.night[500],
-    backgroundColor: colors.pale_purple[600],
+    borderColor: colors.night.standard,
+    backgroundColor: colors.pale_purple.light,
     borderRadius: 8,
     padding: 16,
     width: '100%',
@@ -207,6 +207,6 @@ const styles = StyleSheet.create({
     fontFamily: 'SpaceMono-Bold',
     textAlign: 'center',
     paddingTop: '70%',
-    color: colors.night[700],
+    color: colors.night.placeholder,
   },
 });

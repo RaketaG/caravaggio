@@ -16,17 +16,17 @@ export const toastConfig: ToastConfig = {
 
 const styles = StyleSheet.create({
   container: {
-    borderLeftColor: colors.imperial_red[500],
-    backgroundColor: colors.white[500],
+    borderLeftColor: colors.imperialRed,
+    backgroundColor: colors.white,
   },
   text1Style: {
     fontSize: 14,
     fontFamily: 'SpaceMono-Bold',
-    color: colors.night[500],
+    color: colors.night.standard,
   },
   text2Style: {
     fontSize: 10,
     fontFamily: 'SpaceMono-Regular',
-    color: colors.night[500],
+    color: colors.night.standard,
   },
 });

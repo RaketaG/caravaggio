@@ -19,7 +19,7 @@ export const BlueButton = ({ label, onPress }: BlueButtonProps) => {
 
 const styles = StyleSheet.create({
   button: {
-    backgroundColor: colors.mindaro[500],
+    backgroundColor: colors.mindaro,
     borderRadius: 8,
     padding: 16,
     width: '100%',
@@ -30,7 +30,7 @@ const styles = StyleSheet.create({
     opacity: 0.6,
   },
   buttonText: {
-    color: colors.night[500],
+    color: colors.night["standard"],
     fontFamily: 'SpaceMono-Bold',
     fontSize: 16,
   },

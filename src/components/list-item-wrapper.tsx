@@ -97,6 +97,6 @@ const styles = StyleSheet.create({
     fontSize: 16,
   },
   deleteText: {
-    color: colors.imperial_red[500],
+    color: colors.imperialRed,
   },
 });

@@ -54,7 +54,7 @@ const styles = StyleSheet.create({
     overflow: "hidden",
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: colors.pale_purple[500],
+    backgroundColor: colors.pale_purple["standard"],
   },
 });
 ``

@@ -27,7 +27,7 @@ export const CustomHeader = ({
             ]}
             onPress={goBack}
           >
-            <IconBack color={colors.night[500]} />
+            <IconBack color={colors.night["standard"]} />
           </Pressable>
         )}
         <Text style={styles.headerText}>{headerText}</Text>
@@ -50,12 +50,12 @@ export const CustomHeader = ({
 const styles = StyleSheet.create({
   safeAreaView: {
     width: "100%",
-    backgroundColor: colors.light_cyan[500],
+    backgroundColor: colors.lightCyan,
   },
   container: {
     width: '100%',
     height: Platform.OS === "android" ? 64 : 40,
-    backgroundColor: colors.light_cyan[500],
+    backgroundColor: colors.lightCyan,
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
@@ -65,8 +65,8 @@ const styles = StyleSheet.create({
     zIndex: 1,
   },
   backButton: {
-    backgroundColor: colors.fawn[500],
-    borderColor: colors.night[500],
+    backgroundColor: colors.fawn,
+    borderColor: colors.night["standard"],
     borderWidth: 2,
     justifyContent: 'center',
     alignItems: 'center',
@@ -76,8 +76,8 @@ const styles = StyleSheet.create({
     zIndex: 2,
   },
   actionButton: {
-    backgroundColor: colors.fawn[500],
-    borderColor: colors.night[500],
+    backgroundColor: colors.fawn,
+    borderColor: colors.night["standard"],
     borderWidth: 2,
     paddingHorizontal: 4,
     justifyContent: 'center',

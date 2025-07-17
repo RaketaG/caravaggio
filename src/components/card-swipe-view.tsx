@@ -1,6 +1,11 @@
 import { useState } from 'react';
 import { View, StyleSheet, Dimensions } from 'react-native';
-import Animated, { runOnJS, withTiming } from 'react-native-reanimated';
+import Animated, {
+  Easing,
+  ReduceMotion,
+  runOnJS,
+  withTiming,
+} from 'react-native-reanimated';
 import { Gesture, GestureDetector } from 'react-native-gesture-handler';
 import { colors } from '../theme/colors';
 import { useCardAnimationState } from '../hooks/use-card-animation-state';
@@ -70,12 +75,16 @@ export const CardSwipeView = ({ cardsData }: { cardsData: CardDataType[] }) => {
     });
 
   const longPressGesture = Gesture.LongPress()
-    .minDuration(100)
+    .minDuration(200)
     .maxDistance(SCREEN_WIDTH * 0.9)
     .onStart(() => {
       cards[1].fontFamily.value = 'SpaceMono-Regular';
-      cards[1].pressedColor.value = withTiming(`${colors.fawn[500]}FF`);
-      cards[1].scale.value = withTiming(1.1);
+      cards[1].pressedColor.value = withTiming(`${colors.fawn}FF`);
+      cards[1].scale.value = withTiming(1.1, {
+        duration: 400,
+        easing: Easing.elastic(5),
+        reduceMotion: ReduceMotion.System,
+      });
       cards[1].fontSize.value = 16;
       runOnJS(setIsDescription)(true);
     })
@@ -124,7 +133,7 @@ const styles = StyleSheet.create({
     width: '80%',
     height: '30%',
     padding: 4,
-    backgroundColor: colors.melon[500],
+    backgroundColor: colors.melon,
     borderRadius: 8,
     borderWidth: 2,
   },
