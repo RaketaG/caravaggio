@@ -72,13 +72,11 @@ export const CardSwipeView = ({ cardsData }: { cardsData: CardDataType[] }) => {
   const longPressGesture = Gesture.LongPress()
     .minDuration(100)
     .maxDistance(SCREEN_WIDTH * 0.9)
-    .onBegin(() => {
+    .onStart(() => {
       cards[1].fontFamily.value = 'SpaceMono-Regular';
       cards[1].pressedColor.value = withTiming(`${colors.fawn[500]}FF`);
       cards[1].scale.value = withTiming(1.1);
       cards[1].fontSize.value = 16;
-    })
-    .onStart(() => {
       runOnJS(setIsDescription)(true);
     })
     .onFinalize(() => {
@@ -89,7 +87,7 @@ export const CardSwipeView = ({ cardsData }: { cardsData: CardDataType[] }) => {
       cards[1].scale.value = withTiming(1);
     });
 
-  const composedGesture = Gesture.Race(longPressGesture, swipeGesture);
+  const composedGesture = Gesture.Race(swipeGesture, longPressGesture);
 
   return (
     <View style={styles.container}>
