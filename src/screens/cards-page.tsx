@@ -115,7 +115,7 @@ export const CardsPage = ({
 
       <CustomHeader
         headerText="Cards"
-        actionText="Quiz"
+        action="quiz"
         onAction={() => {
           if (cards.length > 1) {
             navigation.navigate('QuizPage', { collectionName });
@@ -186,7 +186,6 @@ const styles = StyleSheet.create({
     width: '100%',
     paddingTop: 16,
     paddingHorizontal: 16,
-    overflow: 'visible',
   },
   inputField: {
     borderWidth: 2,
