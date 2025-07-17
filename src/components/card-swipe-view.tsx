@@ -70,24 +70,26 @@ export const CardSwipeView = ({ cardsData }: { cardsData: CardDataType[] }) => {
     });
 
   const longPressGesture = Gesture.LongPress()
-    .minDuration(200)
-    .maxDistance(20)
-    .onStart(() => {
-      runOnJS(setIsDescription)(true);
+    .minDuration(100)
+    .maxDistance(SCREEN_WIDTH * 0.9)
+    .onBegin(() => {
       cards[1].fontFamily.value = 'SpaceMono-Regular';
-      cards[1].fontSize.value = 16;
       cards[1].pressedColor.value = withTiming(`${colors.fawn[500]}FF`);
       cards[1].scale.value = withTiming(1.1);
+      cards[1].fontSize.value = 16;
     })
-    .onEnd(() => {
+    .onStart(() => {
+      runOnJS(setIsDescription)(true);
+    })
+    .onFinalize(() => {
       runOnJS(setIsDescription)(false);
       cards[1].fontFamily.value = 'SpaceMono-Bold';
-      cards[1].fontSize.value = 26;
+      cards[1].fontSize.value = withTiming(26);
       cards[1].pressedColor.value = '#00000000';
-      cards[1].scale.value = 1;
+      cards[1].scale.value = withTiming(1);
     });
 
-  const composedGesture = Gesture.Race(swipeGesture, longPressGesture);
+  const composedGesture = Gesture.Race(longPressGesture, swipeGesture);
 
   return (
     <View style={styles.container}>
@@ -95,7 +97,7 @@ export const CardSwipeView = ({ cardsData }: { cardsData: CardDataType[] }) => {
         return (
           <GestureDetector
             key={`${card.data.id}_${index}`}
-            gesture={composedGesture}
+            gesture={index === 1 ? composedGesture : Gesture.Exclusive()}
           >
             <Animated.View style={[styles.card, card.animatedStyle]}>
               <Animated.View
