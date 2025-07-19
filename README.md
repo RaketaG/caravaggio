@@ -16,6 +16,8 @@ Create collections, populate them with flash cards and quiz yourself.
 - iOS setup:
   - ```brew install cocoapods```
   - ```cd ios && pod install && cd ..```
+- Android setup:
+    - Make sure android sdk is configured in the system PATH **or** create a file ```local.properties``` in android directory and add the line pointing to your sdk path ```sdk.dir=/your/sdk/path```
 - Run Metro dev server: ```npm start``` or ```npx react-native start```
 - iOS: Open Xcode, select a virtual simulator or a physical device and build.
 - Android: Open an android virtual device and run ```npx react-native run-android```
