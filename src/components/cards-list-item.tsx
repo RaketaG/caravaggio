@@ -5,7 +5,6 @@ export const Background_Colors = [
   colors.periwinkle,
   colors.melon,
   colors.vanilla,
-  colors.lightCyan,
 ];
 
 export const CardsListItem = ({

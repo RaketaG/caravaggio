@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useState } from 'react';
-import { StyleSheet, View, TextInput, ScrollView, Text } from 'react-native';
+import { StyleSheet, View, TextInput, ScrollView, Text, Platform } from 'react-native';
 import {
   createTable,
   dropTable,
@@ -15,7 +15,6 @@ import { ListItemWrapper } from '../components/list-item-wrapper.tsx';
 import { AddButton } from '../components/add-button.tsx';
 import { ModalWrapper } from '../components/modal-wrapper.tsx';
 import { colors } from '../theme/colors.ts';
-import { CustomHeader } from '../components/custom-header.tsx';
 import Toast from 'react-native-toast-message';
 
 export const MyCollectionsPage = () => {
@@ -103,7 +102,7 @@ export const MyCollectionsPage = () => {
           <TextInput
             style={styles.inputField}
             placeholder="Collection name"
-            placeholderTextColor={colors.night["placeholder"]}
+            placeholderTextColor={colors.night.placeholder}
             value={newCollectionName.replaceAll('_', ' ')}
             onChangeText={text => {
               if (/^[a-zA-Z0-9 ]*$/.test(text)) {
@@ -121,10 +120,10 @@ export const MyCollectionsPage = () => {
           )}
         </View>
       </ModalWrapper>
-
-      <CustomHeader headerText="Collections" />
+      
       <ScrollView
         style={styles.scrollView}
+        contentContainerStyle={styles.scrollViewContent}
         showsVerticalScrollIndicator={false}
         showsHorizontalScrollIndicator={false}
       >
@@ -188,15 +187,15 @@ export const MyCollectionsPage = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: colors.pale_purple["standard"],
+    backgroundColor: colors.pale_purple.standard,
   },
   scrollView: {
     width: '100%',
-    paddingTop: 16,
+  },
+  scrollViewContent: {
     paddingHorizontal: 16,
-    overflow: 'visible',
+    paddingTop: 16,
+    paddingBottom: Platform.OS === 'ios' ? 32 : 8,
   },
   inputFieldWrapper: {
     width: '100%',
@@ -204,8 +203,8 @@ const styles = StyleSheet.create({
   },
   inputField: {
     borderWidth: 2,
-    borderColor: colors.night["standard"],
-    backgroundColor: colors.pale_purple["light"],
+    borderColor: colors.night.standard,
+    backgroundColor: colors.pale_purple.light,
     borderRadius: 8,
     padding: 16,
     width: '100%',
@@ -216,7 +215,7 @@ const styles = StyleSheet.create({
     fontFamily: 'SpaceMono-Regular',
     textAlign: 'center',
     paddingTop: '70%',
-    color: colors.night["placeholder"],
+    color: colors.night.placeholder,
   },
   errorText: {
     fontFamily: 'SpaceMono-Regular',

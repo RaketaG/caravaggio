@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useState } from 'react';
-import { StyleSheet, View, ScrollView, TextInput, Text } from 'react-native';
+import { StyleSheet, View, ScrollView, TextInput, Text, Platform } from 'react-native';
 import {
   deleteRecord,
   getDbConnection,
@@ -18,8 +18,8 @@ import { AddButton } from '../components/add-button.tsx';
 import { ModalWrapper } from '../components/modal-wrapper.tsx';
 import { useNavigation } from '@react-navigation/native';
 import { colors } from '../theme/colors.ts';
-import { CustomHeader } from '../components/custom-header.tsx';
 import Toast from 'react-native-toast-message';
+import { HeaderButton } from '../components/header-button.tsx';
 
 export type CardType = {
   id: string;
@@ -38,6 +38,32 @@ export const CardsPage = ({
   const [addModalVisibility, setAddModalVisibility] = useState<boolean>(false);
   const [cardId, setCardId] = useState<string>('');
   const [forUpdate, setForUpdate] = useState<boolean>(true);
+
+  const headerRight = useCallback(() => {
+    return (
+      <HeaderButton
+        action="exercise"
+        onAction={() => {
+          if (cards.length > 1) {
+            navigation.navigate('QuizPage', { collectionName });
+          } else {
+            Toast.show({
+              type: 'error',
+              text1: 'Quiz Not Available',
+              text2: 'Please add at least 2 cards before starting.',
+              position: 'bottom',
+            });
+          }
+        }}
+      />
+    );
+  }, [collectionName, navigation, cards]);
+
+  useEffect(() => {
+    navigation.setOptions({
+      headerRight: headerRight,
+    });
+  }, [headerRight, navigation]);
 
   const newCard = async () => {
     const db = await getDbConnection();
@@ -113,26 +139,9 @@ export const CardsPage = ({
         />
       </ModalWrapper>
 
-      <CustomHeader
-        headerText="Cards"
-        action="quiz"
-        onAction={() => {
-          if (cards.length > 1) {
-            navigation.navigate('QuizPage', { collectionName });
-          } else {
-            Toast.show({
-              type: 'error',
-              text1: 'Quiz Not Available',
-              text2: 'Please add at least 2 cards before starting.',
-              position: 'bottom',
-            });
-          }
-        }}
-        goBack={() => navigation.goBack()}
-      />
-
       <ScrollView
         style={styles.scrollView}
+        contentContainerStyle={styles.scrollViewContent}
         showsVerticalScrollIndicator={false}
         showsHorizontalScrollIndicator={false}
       >
@@ -184,8 +193,11 @@ const styles = StyleSheet.create({
   },
   scrollView: {
     width: '100%',
-    paddingTop: 16,
+  },
+  scrollViewContent: {
     paddingHorizontal: 16,
+    paddingTop: 16,
+    paddingBottom: Platform.OS === 'ios' ? 32 : 8,
   },
   inputField: {
     borderWidth: 2,
@@ -195,7 +207,7 @@ const styles = StyleSheet.create({
     padding: 16,
     width: '100%',
     fontSize: 16,
-    fontFamily: "SpaceMono-Bold",
+    fontFamily: 'SpaceMono-Bold',
     marginBottom: 16,
   },
   descriptionHeight: {

@@ -9,7 +9,7 @@ import { StackParams } from '../../App';
 import { useNavigation } from '@react-navigation/native';
 import { CardDataType, CardSwipeView } from '../components/card-swipe-view';
 import { colors } from '../theme/colors';
-import { CustomHeader } from '../components/custom-header';
+import { HeaderButton } from '../components/header-button';
 
 export const QuizPage = ({
   route,
@@ -17,6 +17,18 @@ export const QuizPage = ({
   const navigation = useNavigation<NativeStackNavigationProp<StackParams>>();
   const { collectionName } = route.params;
   const [cards, setCards] = useState<CardDataType[]>([]);
+
+  const headerRight = useCallback(() => {
+    return (
+      <HeaderButton action="home" onAction={() => navigation.popToTop()} />
+    );
+  }, [navigation]);
+
+  useEffect(() => {
+    navigation.setOptions({
+      headerRight: headerRight,
+    });
+  }, [headerRight, navigation]);
 
   const listCards = useCallback(async () => {
     const db = await getDbConnection();
@@ -34,15 +46,9 @@ export const QuizPage = ({
   useEffect(() => {
     listCards();
   }, [listCards]);
-  
+
   return (
     <View style={styles.container}>
-      <CustomHeader
-        headerText="Quiz"
-        goBack={() => navigation.goBack()}
-        onAction={() => navigation.popToTop()}
-        actionText="Collections"
-      />
       {cards.length > 0 && <CardSwipeView cardsData={cards} />}
     </View>
   );
@@ -51,10 +57,9 @@ export const QuizPage = ({
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    overflow: "hidden",
+    overflow: 'hidden',
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: colors.pale_purple["standard"],
+    backgroundColor: colors.pale_purple.standard,
   },
 });
-``
